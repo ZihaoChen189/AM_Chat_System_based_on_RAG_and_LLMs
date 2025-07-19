@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- meta 是给浏览器的一些元数据 不是直接渲染到页面上的内容
+    name="viewport" 指定 视口viewport 的设置 也就是浏览器窗口中网页可视区域的参数
+
+    content="width=device-width" 把网页宽度设置为“设备的实际屏幕宽度” 而不是默认980px或者别的虚拟宽度
+    initial-scale=1.0 页面首次加载时的缩放比例是1 不放大不缩小 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Chat System</title>
+
+    <!-- 这些都叫CDN链接 就是“在线引用的第三方库”
+    和 install 不同 这里是用 script/link 标签直接插入 属于最简洁的demo写法
+    只要这些 CDN 没挂 你不用下载 不用配置 直接用 -->
+
+    <!-- Vue 3 的必须有 vue.js; 要调API必须有 axios; 要有好看图标和代码块高亮就引入 font-awesome 和 highlight.js -->
+
+    <!-- 引入 Vue 3 框架的主文件 类比于 PyTorch 里 import torch-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>  
+    <!-- 引入 axios 这个库 专门用来发 HTTP 请求 和你的 FastAPI 后端交互 类比于 requests 库 网络请求神器 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入 marked 这个库 可以把 markdown 格式 比如 AI 回答的内容里有 **粗体** # 标题 代码块 的内容渲染成 HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 引入 highlight.js 专门用来做代码高亮 你在聊天界面看到有代码片段 能自动变色 就是这个库搞的 -->
+    <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
+    <!-- Font Awesome 6 的图标库 页面里的小机器人 文件夹 对话框等图标都来自这里 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- 给 highlight.js 加上 github 风格的 CSS 样式 让代码块的配色和 github 上一样好看 -->
+    <link href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/github.min.css" rel="stylesheet">
+
+    <!-- :first-child 选中第一个元素
+
+    :last-child 选中最后一个元素
+
+    :nth-child(n) 选中第n个元素
+
+    :hover 鼠标悬停
+
+    :active 被点击
+
+    :disabled 被禁用 -->
+
+    <!-- .a.b { ... } 选中class中同时包含 a 和 b 的元素 等价于 <div class="a b"></div> -->
+
+    <style>
+        /* 有点（.）是“类名” 没点就是标签 */
+
+        /* 类选择器 */
+        /* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+        /* 后代选择器 */
+
+
+        * {  
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }  /* 通配符选择器 所有元素 */
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }  /* 选中所有 <body> 元素 */
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            gap: 20px;
+        }/* 类选择器 */
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }/* 类选择器 */
+
+        .main-content {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 40px);
+        }/* 类选择器 */
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }/* 类选择器 */
+
+        .logo h1 {
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }  /* 后代选择器 */
+
+        .logo p {
+            color: #666;
+            font-size: 13px;
+        } /* 后代选择器 */
+
+        .status-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }/* 类选择器 */
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }/* 类选择器 */
+
+        .status-item:last-child {
+            margin-bottom: 0;
+        }  /* 给列表最后一项去掉下划线 margin等 做边界处理 */
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+        }/* 类选择器 */
+
+        .status-indicator.error {
+            background: #dc3545;
+        }/* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .documents-tree {
+            margin-bottom: 20px;
+        }/* 类选择器 */
+
+        .tree-header {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e9ecef;
+        }/* 类选择器 */
+
+        .tree-header h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+        }/* 后代选择器 */
+
+        .download-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }/* 类选择器 */
+
+        .download-btn:hover:not(:disabled) {
+            background: #0056b3;
+        } /* 选中所有 class="download-btn" 的按钮   并且鼠标悬停在按钮上（hover）   并且按钮“没有被禁用”（not disabled） */
+
+        .download-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }  /* 选中所有 class="download-btn" 并且被禁用的按钮 */
+
+        .tree-container {
+            background: #fafafa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }/* 类选择器 */
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            margin: 1px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }/* 类选择器 */
+
+        .tree-item:hover {
+            background: #e9ecef;
+        }   /* 鼠标移到文档树的某一项时，这一项背景色变浅灰色 */
+
+        .tree-item.folder {
+            font-weight: 500;
+            color: #495057;
+        }/* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .tree-item.file {
+            color: #6c757d;
+        }/* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .tree-icon {
+            margin-right: 6px;
+            width: 14px;
+            text-align: center;
+            font-size: 12px;
+        }/* 类选择器 */
+
+        .tree-icon.folder {
+            color: #ffc107;
+        }/* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .tree-icon.file-pdf {
+            color: #dc3545;
+        }/* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .tree-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }/* 类选择器 */
+
+        .chat-header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            text-align: center;
+        }/* 类选择器 */
+
+        .chat-header h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }/* 后代选择器 */
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 13px;
+        }/* 后代选择器 */
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }/* 类选择器 */
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #fafafa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            min-height: 400px;
+        }/* 类选择器 */
+
+        .message {
+            margin-bottom: 15px;
+        }/* 类选择器 */
+
+        .message-user {
+            text-align: right;
+        }/* 类选择器 */
+
+        .message-assistant {
+            text-align: left;
+        }/* 类选择器 */
+
+        .message-content {
+            display: inline-block;
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+        }/* 类选择器 */
+
+        .message-user .message-content {
+            background: #007bff;
+            color: white;
+        } /* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .message-assistant .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        } /* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        /* Markdown 一堆后代选择器 styles */
+        .message-content h1, .message-content h2, .message-content h3,
+        .message-content h4, .message-content h5, .message-content h6 {
+            margin: 12px 0 6px 0;
+            font-weight: 600;
+        }
+
+        .message-content h1 { font-size: 1.4em; }/* 后代选择器 */
+
+        .message-content h2 { font-size: 1.2em; }/* 后代选择器 */
+
+        .message-content h3 { font-size: 1.1em; }/* 后代选择器 */
+
+        .message-content p {  margin: 6px 0; }/* 后代选择器 */
+
+        .message-content pre {
+            background: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            padding: 12px;
+            overflow-x: auto;
+            margin: 8px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+        }/* 后代选择器 */
+
+        .message-content code {
+            background: #f6f8fa;
+            border-radius: 3px;
+            padding: 2px 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }/* 后代选择器 */
+
+        .message-content pre code {
+            background: transparent;
+            padding: 0;
+        }/* 后代选择器 */
+
+        .message-content ul, .message-content ol {
+            margin: 6px 0;
+            padding-left: 20px;
+        }/* 后代选择器 */
+
+        .message-content li {
+            margin: 2px 0;
+        }/* 后代选择器 */
+
+        .message-content blockquote {
+            border-left: 3px solid #dfe2e5;
+            padding: 0 12px;
+            margin: 8px 0;
+            color: #6a737d;
+        }/* 后代选择器 */
+
+        .message-content table {
+            border-collapse: collapse;
+            margin: 8px 0;
+            width: 100%;
+        }/* 后代选择器 */
+
+        .message-content th, .message-content td {
+            border: 1px solid #dfe2e5;
+            padding: 6px 8px;
+            text-align: left;
+        }/* 后代选择器 */
+
+        .message-content th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }/* 后代选择器 */
+
+        .message-content a {
+            color: #0366d6;
+            text-decoration: none;
+        }/* 后代选择器 */
+
+        .message-content a:hover {
+            text-decoration: underline;
+        } /* 后代选择器 + 鼠标悬浮 */
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }/* 类选择器 */
+
+        .folder-selector {
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }/* 类选择器 */
+
+        .folder-selector label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+            white-space: nowrap;
+        }/* 后代选择器 */
+
+        .folder-select {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background: white;
+            font-size: 14px;
+            color: #495057;
+        }/* 类选择器 */
+
+        .folder-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }/* 点进去 */
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+        }/* 类选择器 */
+
+        .message-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }/* 类选择器 */
+
+        .message-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }/* 点进去 */
+
+        .send-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }/* 类选择器 */
+
+        .send-btn:hover:not(:disabled) {
+            background: #0056b3;
+        } /* 选中class="send-btn" 的按钮，  当鼠标悬停（hover）在上面，并且**按钮没有被禁用（:not(:disabled)）**时， */
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }/* 选中被禁用的发送按钮（disabled）    设置透明度为0.5（半透明，表示不可用） */
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }/* 类选择器 */
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            font-size: 14px;
+        }/* 类选择器 */
+
+        .notification.success {
+            background: #28a745;
+        }/* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .notification.error {
+            background: #dc3545;
+        }/* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .notification.info {
+            background: #17a2b8;
+        }/* 多类同时满足  .a.b {} 选中class属性里同时有a和b的元素 */
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }/* 类选择器 */
+
+        .empty-state i {
+            font-size: 48px;
+            color: #dee2e6;
+            margin-bottom: 15px;
+        }/* 后代选择器 */
+
+        .empty-state h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #495057;
+        }/* 后代选择器 */
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }/* 动画关键帧   0% 表示动画开始时（0%），元素没有旋转。  100% 表示动画结束时（100%），元素已经旋转了360度。 */
+
+        @media (max-width: 768px) {/* @media 是媒体查询，用来做“响应式布局”，让网页自动适应不同屏幕大小（手机、平板、PC）。 */
+            .app-container {
+                flex-direction: column;
+                padding: 10px;
+            }  /* 当屏幕宽度小于等于768像素时   布局方向变成纵向从左右排变成上下排  内边距缩小，页面更紧凑 */
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+            }/* 类选择器 */
+
+            .message-content {
+                max-width: 90%;
+            }/* 类选择器 */
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="app-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Logo -->
+                <div class="logo">
+                    <h1><i class="fas fa-robot"></i> RAG Assistant</h1>
+                    <p>Document Chat System</p>
+                </div>
+
+                <!-- System Status -->
+                <div class="status-card">
+                    <div class="status-item">
+                        <span>Status</span>
+                        <div class="status-indicator" :class="{error: !systemStatus.is_ready}"></div>
+                    </div>
+                    <div class="status-item">
+                        <span>Documents</span>
+                        <span>{{ systemStatus.documents_count }}</span>
+                    </div>
+                    <div class="status-item">
+                        <span>Index</span>
+                        <span>{{ systemStatus.index_status }}</span>
+                    </div>
+                </div>
+
+                <!-- Document Tree -->
+                <div class="documents-tree">
+                    <div class="tree-header">
+                        <h3><i class="fas fa-folder"></i> Documents</h3>
+                        <button class="download-btn" 
+                                @click="downloadAllDocuments"
+                                :disabled="systemStatus.documents_count === 0 || isDownloading">
+                            <i class="fas fa-download" v-if="!isDownloading"></i>
+                            <div class="loading" v-else></div>
+                            {{ isDownloading ? 'Downloading...' : 'Download' }}
+                        </button>
+                    </div>
+                    <div class="tree-container">
+                        <div v-if="Object.keys(documentTree).length === 0" class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <p>No documents</p>
+                        </div>
+                        <div v-else>
+                            <!-- Root Directory -->
+                            <div class="tree-item folder" @click="toggleFolder('documents')">
+                                <i class="tree-icon" :class="isFolderExpanded('documents') ? 'fas fa-folder-open' : 'fas fa-folder'" style="color: #ffc107;"></i>
+                                <span class="tree-text">documents/</span>
+                                <i class="fas" :class="isFolderExpanded('documents') ? 'fa-chevron-down' : 'fa-chevron-right'" style="margin-left: auto; font-size: 10px;"></i>
+                            </div>
+                            
+                            <!-- Folder contents -->
+                            <template v-if="isFolderExpanded('documents')">
+                                <template v-for="(item, key) in documentTree" :key="key">
+                                    <div v-if="item.type === 'folder'" class="tree-item folder" 
+                                         :style="{paddingLeft: '20px'}"
+                                         @click="toggleFolder('documents/' + key)">
+                                        <i class="tree-icon" 
+                                           :class="isFolderExpanded('documents/' + key) ? 'fas fa-folder-open' : 'fas fa-folder'" 
+                                           style="color: #ffc107;"></i>
+                                        <span class="tree-text">{{ key }}/</span>
+                                        <i class="fas" 
+                                           :class="isFolderExpanded('documents/' + key) ? 'fa-chevron-down' : 'fa-chevron-right'" 
+                                           style="margin-left: auto; font-size: 10px;"></i>
+                                    </div>
+                                    
+                                    <!-- Files in folders -->
+                                    <template v-if="item.type === 'folder' && isFolderExpanded('documents/' + key)">
+                                        <div v-for="file in item.files" :key="file.filename" 
+                                             class="tree-item file"
+                                             :style="{paddingLeft: '40px'}">
+                                            <i class="tree-icon" :class="getFileIconClass(file.file_type)"></i>
+                                            <span class="tree-text" :title="file.filename">{{ truncateFileName(file.name) }}</span>
+                                        </div>
+                                    </template>
+                                </template>
+                                
+                                <!-- Root files -->
+                                <div v-for="file in documentTree._rootFiles || []" :key="file.filename" 
+                                     class="tree-item file"
+                                     :style="{paddingLeft: '20px'}">
+                                    <i class="tree-icon" :class="getFileIconClass(file.file_type)"></i>
+                                    <span class="tree-text" :title="file.filename">{{ truncateFileName(file.name) }}</span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <h2><i class="fas fa-comments"></i> Chat</h2>
+                    <p>Ask questions about your documents</p>
+                </div>
+
+                <!-- Chat Container -->
+                <div class="chat-container">
+                    <!-- Messages -->
+                    <div class="messages-area" ref="messagesArea">
+                        <div v-if="messages.length === 0" class="empty-state">
+                            <i class="fas fa-comment-dots"></i>
+                            <h3>Start Conversation</h3>
+                            <p>Ask questions about your documents</p>
+                        </div>
+                        <div v-for="(message, index) in messages" :key="index" 
+                             class="message" :class="'message-' + message.type">
+                            <div class="message-content">
+                                <div v-if="message.type === 'user'">
+                                    {{ message.content }}
+                                </div>
+                                <div v-else v-html="message.type === 'assistant' ? marked.parse(message.content) : message.content"></div>
+                            </div>
+                            <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+                        </div>
+                        <div v-if="isLoading" class="message message-assistant">
+                            <div class="message-content">
+                                <div class="loading"></div>
+                                Thinking...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Folder Selector -->
+                    <div class="folder-selector">
+                        <label for="folder-select">
+                            <i class="fas fa-folder"></i> Scope:
+                        </label>
+                        <select id="folder-select" v-model="selectedFolder" class="folder-select">
+                            <option value="">All Documents</option>
+                            <option v-for="folder in folders" :key="folder.folder_name" :value="folder.folder_name">
+                                {{ folder.folder_name }} ({{ folder.documents_count }} docs)
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="input-area">
+                        <input type="text" 
+                               class="message-input"
+                               v-model="currentMessage"
+                               @keydown.enter.prevent="sendMessage"
+                               :placeholder="selectedFolder ? 'Ask about ' + selectedFolder + '...' : 'Ask a question...'"
+                               :disabled="isLoading || !systemStatus.is_ready">
+                        <button class="send-btn" 
+                                @click="sendMessage"
+                                :disabled="isLoading || !currentMessage.trim() || !systemStatus.is_ready">
+                            <i class="fas fa-paper-plane" v-if="!isLoading"></i>
+                            <div class="loading" v-else></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div v-if="notification.show" 
+             class="notification" 
+             :class="notification.type">
+            {{ notification.message }}
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted, nextTick } = Vue;
+
+        createApp({
+        // setup() 面向前端的业务控制中心
+            setup() {
+                // Reactive data
+                // ref() 相当于 Tensor
+                const systemStatus = ref({
+                    is_ready: false,
+                    documents_count: 0,
+                    index_status: 'Not initialized'
+                });
+                
+                const documents = ref([]);
+                const documentTree = ref([]);
+                const folders = ref([]);
+                const selectedFolder = ref('');
+                const messages = ref([]);
+                const currentMessage = ref('');
+                const isLoading = ref(false);
+                const isDownloading = ref(false);
+                const messagesArea = ref(null);
+                const conversationId = ref(null);
+                const expandedFolders = ref(new Set());
+                
+                const notification = ref({
+                    show: false,
+                    message: '',
+                    type: 'success'
+                });
+
+                // API base URL
+                const API_BASE = 'http://localhost:8000/api';
+
+                // Show notification
+                const showNotification = (message, type = 'success') => {
+                    notification.value = {
+                        show: true,
+                        message,
+                        type
+                    };
+                    
+                    setTimeout(() => {
+                        notification.value.show = false;
+                    }, 3000);
+                };
+
+                // Load system status
+                const loadSystemStatus = async () => {
+                    try {
+                        const response = await axios.get(`${API_BASE}/status`);
+                        systemStatus.value = response.data;
+                    } catch (error) {
+                        console.error('Failed to load system status:', error);
+                    }
+                };
+
+                // Build document tree
+                const buildDocumentTree = (documents) => {
+                    const tree = {};
+                    const rootFiles = [];
+                    
+                    documents.forEach(doc => {
+                        const pathParts = doc.filename.split('/');
+                        
+                        if (pathParts.length === 1) {
+                            rootFiles.push({
+                                type: 'file',
+                                name: pathParts[0],
+                                ...doc
+                            });
+                            return;
+                        }
+                        
+                        let currentLevel = tree;
+                        
+                        for (let i = 0; i < pathParts.length - 1; i++) {
+                            const folderName = pathParts[i];
+                            if (!currentLevel[folderName]) {
+                                currentLevel[folderName] = {
+                                    type: 'folder',
+                                    name: folderName,
+                                    children: {},
+                                    files: []
+                                };
+                            }
+                            currentLevel = currentLevel[folderName].children;
+                        }
+                        
+                        const fileName = pathParts[pathParts.length - 1];
+                        let targetFolder = tree;
+                        for (let i = 0; i < pathParts.length - 1; i++) {
+                            targetFolder = targetFolder[pathParts[i]];
+                        }
+                        
+                        if (!targetFolder.files) {
+                            targetFolder.files = [];
+                        }
+                        
+                        targetFolder.files.push({
+                            type: 'file',
+                            name: fileName,
+                            ...doc
+                        });
+                    });
+                    
+                    tree._rootFiles = rootFiles;
+                    return tree;
+                };
+
+                // Load documents
+                const loadDocuments = async () => {
+                    try {
+                        const response = await axios.get(`${API_BASE}/documents`);
+                        documents.value = response.data;
+                        documentTree.value = buildDocumentTree(response.data);
+                    } catch (error) {
+                        console.error('Failed to load documents:', error);
+                    }
+                };
+
+                // Load folders
+                const loadFolders = async () => {
+                    try {
+                        const response = await axios.get(`${API_BASE}/folders`);
+                        folders.value = response.data;
+                    } catch (error) {
+                        console.error('Failed to load folders:', error);
+                    }
+                };
+
+                // Get file icon
+                const getFileIconClass = (fileType) => {
+                    const iconMap = {
+                        '.pdf': 'file-pdf fas fa-file-pdf',
+                        '.doc': 'fas fa-file-word',
+                        '.docx': 'fas fa-file-word',
+                        '.txt': 'fas fa-file-alt',
+                        '.md': 'fab fa-markdown',
+                        '.html': 'fab fa-html5'
+                    };
+                    return iconMap[fileType?.toLowerCase()] || 'fas fa-file';
+                };
+
+                // Toggle folder
+                const toggleFolder = (folderPath) => {
+                    if (expandedFolders.value.has(folderPath)) {
+                        expandedFolders.value.delete(folderPath);
+                    } else {
+                        expandedFolders.value.add(folderPath);
+                    }
+                    expandedFolders.value = new Set(expandedFolders.value);
+                };
+
+                // Check if folder expanded
+                const isFolderExpanded = (folderPath) => {
+                    return expandedFolders.value.has(folderPath);
+                };
+
+                // Truncate filename
+                const truncateFileName = (filename, maxLength = 20) => {
+                    if (!filename || filename.length <= maxLength) {
+                        return filename;
+                    }
+                    const extension = filename.substring(filename.lastIndexOf('.'));
+                    const nameWithoutExt = filename.substring(0, filename.lastIndexOf('.'));
+                    const truncatedName = nameWithoutExt.substring(0, maxLength - extension.length - 3);
+                    return `${truncatedName}...${extension}`;
+                };
+
+                // Send message with debounce protection
+                let sendingInProgress = false;
+                const sendMessage = async () => {
+                    // Prevent multiple simultaneous requests
+                    if (!currentMessage.value.trim() || isLoading.value || !systemStatus.value.is_ready || sendingInProgress) {
+                        return;
+                    }
+                    
+                    sendingInProgress = true;
+                    const userMessage = currentMessage.value.trim();
+                    currentMessage.value = '';
+                    
+                    messages.value.push({
+                        type: 'user',
+                        content: userMessage,
+                        timestamp: new Date()
+                    });
+                    
+                    scrollToBottom();
+                    isLoading.value = true;
+                    
+                    try {
+                        const chatData = {
+                            message: userMessage,
+                            conversation_id: conversationId.value
+                        };
+                        
+                        if (selectedFolder.value) {
+                            chatData.folder_name = selectedFolder.value;
+                        }
+                        
+                        const response = await axios.post(`${API_BASE}/chat`, chatData);
+                        
+                        if (response.data.conversation_id) {
+                            conversationId.value = response.data.conversation_id;
+                        }
+                        
+                        messages.value.push({
+                            type: 'assistant',
+                            content: response.data.response,
+                            timestamp: new Date()
+                        });
+                        
+                        scrollToBottom();
+                    } catch (error) {
+                        const errorMsg = error.response?.data?.detail || 'Failed to send message';
+                        showNotification(errorMsg, 'error');
+                    } finally {
+                        isLoading.value = false;
+                        sendingInProgress = false;
+                    }
+                };
+
+                // Scroll to bottom
+                const scrollToBottom = () => {
+                    nextTick(() => {
+                        if (messagesArea.value) {
+                            messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
+                        }
+                    });
+                };
+
+                // Format time
+                const formatTime = (date) => {
+                    return date.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                };
+
+                // Download all documents
+                const downloadAllDocuments = async () => {
+                    if (systemStatus.value.documents_count === 0 || isDownloading.value) {
+                        return;
+                    }
+                    
+                    isDownloading.value = true;
+                    
+                    try {
+                        showNotification('Preparing download...', 'info');
+                        
+                        const response = await axios.get(`${API_BASE}/download/all`, {
+                            responseType: 'blob'
+                        });
+                        
+                        const blob = new Blob([response.data], { type: 'application/zip' });
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        
+                        const contentDisposition = response.headers['content-disposition'];
+                        let filename = 'documents.zip';
+                        if (contentDisposition) {
+                            const filenameMatch = contentDisposition.match(/filename=(.+)/);
+                            if (filenameMatch) {
+                                filename = filenameMatch[1].replace(/"/g, '');
+                            }
+                        }
+                        
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                        
+                        showNotification(`Downloaded ${systemStatus.value.documents_count} documents`, 'success');
+                        
+                    } catch (error) {
+                        console.error('Download failed:', error);
+                        showNotification('Download failed', 'error');
+                    } finally {
+                        isDownloading.value = false;
+                    }
+                };
+
+                // Initialize
+                // 类似python的init()
+                onMounted(() => {
+                    expandedFolders.value.add('documents');
+                    
+                    loadSystemStatus();
+                    loadDocuments();
+                    loadFolders();
+                    
+                    setInterval(loadSystemStatus, 30000);
+                });
+
+                return {
+                    systemStatus,
+                    documents,
+                    documentTree,
+                    folders,
+                    selectedFolder,
+                    messages,
+                    currentMessage,
+                    isLoading,
+                    isDownloading,
+                    messagesArea,
+                    notification,
+                    expandedFolders,
+                    sendMessage,
+                    toggleFolder,
+                    isFolderExpanded,
+                    getFileIconClass,
+                    truncateFileName,
+                    formatTime,
+                    downloadAllDocuments,
+                    marked
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
