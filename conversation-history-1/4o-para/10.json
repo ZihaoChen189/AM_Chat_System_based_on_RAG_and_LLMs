@@ -1,0 +1,37 @@
+{
+  "conversation_id": "6c588bd3-ed89-4acb-af7b-bcf58e6409cd",
+  "created_at": "2025-08-07T02:50:34.129914",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T02:50:34.129933",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite?",
+      "assistant_response": "The appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite is 210°C, as mentioned in the document [reference_117.pdf].",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T02:50:38.128177",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite?",
+      "assistant_response": "The appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite is 10 mm/s, as mentioned in the document [reference_117.pdf].",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T02:50:42.116869",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite?",
+      "assistant_response": "The appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite is 400 μm, as mentioned in the document [reference_117.pdf].",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T02:50:45.907371",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite?",
+      "assistant_response": "I do not know. The retrieved documents do not provide information about the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite.",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T02:50:48.674562",
+      "user_message": "What is the appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite?",
+      "assistant_response": "The appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite is 400 μm, as mentioned in the document [reference_117.pdf].",
+      "folder_name": "FDM Process Parameters"
+    }
+  ],
+  "updated_at": "2025-08-07T02:50:48.674582"
+}
