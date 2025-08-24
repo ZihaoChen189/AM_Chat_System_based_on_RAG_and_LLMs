@@ -1,0 +1,19 @@
+{
+  "conversation_id": "c007d1f1-0f5e-4448-9e56-ae9738e8d254",
+  "created_at": "2025-08-07T14:55:18.025135",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T14:55:18.025160",
+      "user_message": "What is the appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder?",
+      "assistant_response": "The appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder is 0.4 mm, as specified in the document \"Enhanced_Table_Data.html\" from the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T14:55:57.070972",
+      "user_message": "The table data shows it should be 0.8 not 0.4, i think it is 0.8",
+      "assistant_response": "The document \"Enhanced_Table_Data.html\" specifies that the nozzle diameter for PLA mixed with cork powder is 0.4 mm. If you have seen a different value elsewhere, it might be from another source. Please refer to the document for confirmation.",
+      "folder_name": "Enhanced Table Data"
+    }
+  ],
+  "updated_at": "2025-08-07T14:55:57.070994"
+}
