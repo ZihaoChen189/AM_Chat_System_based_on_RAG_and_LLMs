@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- meta 是给浏览器的一些元数据 不是直接渲染到页面上的内容
+    name="viewport" 指定 视口viewport 的设置 也就是浏览器窗口中网页可视区域的参数
+
+    content="width=device-width" 把网页宽度设置为“设备的实际屏幕宽度” 而不是默认980px或者别的虚拟宽度
+    initial-scale=1.0 页面首次加载时的缩放比例是1 不放大不缩小 -->
+
+    <!-- 这些都叫CDN链接 就是“在线引用的第三方库”
+    和 install 不同 这里是用 script/link 标签直接插入 属于最简洁的写法
+    只要这些 CDN 没挂 你不用下载 不用配置 直接用 -->
+
+    <!-- Vue 3 的必须有 vue.js; 要调API必须有 axios; 要有好看图标和代码块高亮就引入 font-awesome -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Chat System</title>
+    <!-- 引入 Vue 3 框架的主文件 类比于 PyTorch 里 import torch-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入 axios 这个库 专门用来发 HTTP 请求 和你的 FastAPI 后端交互 类比于 requests 库 网络请求神器 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入 marked 这个库 可以把 markdown 格式 比如 AI 回答的内容里有 **粗体** # 标题 代码块 的内容渲染成 HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Font Awesome 6 的图标库 页面里的小机器人 文件夹 对话框等图标都来自这里 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;              /* 页面背景色为浅灰色 */
+        }
+       
+        .app-container {
+            max-width: 1200px;   /* 限制最大宽度为 1200px，防止超宽屏时内容被拉得太开。 */
+            padding: 20px;  /* 内容与外边缘留 20px 空隙，看起来更舒服。 */
+            display: flex;  /* 把 .app-container 设为 Flex 容器，让子元素（比如 sidebar 和 main-content）并排横向排列。*/
+            gap: 10px;  /* Flex 子元素之间的间距为 10px。 */
+            border-radius: 16px;
+            overflow: hidden;  /* 超出容器的内容会被裁掉，这样圆角不会被内部元素破坏。 */
+            
+        }
+
+        .logo { text-align: center; }
+
+        .sidebar {
+            width: 300px;  /* 侧边栏固定宽度 300px，不会自适应变化。 */
+            background: #fff;  /* 纯白背景。 */
+            border: 1px solid #ddd;  /* 边框为浅灰色，给侧边栏和主内容区一个视觉分隔。 */
+            padding: 20px;  /* 内容与边框之间留 20px 空隙。 */
+        }
+
+        .main-content {
+            flex: 1;  /* 在 .app-container 里占据除了 sidebar 以外的所有剩余空间。 */
+            background: #f8f8f8;  /* 比侧边栏稍微深一点的灰色，让两边对比明显。 */
+            border: 1px solid #ddd;  /* 浅灰色边框，和侧边栏的风格一致。 */
+            padding: 10px; /* 内边距 10px，防止内容贴边。 */
+            display: flex;  /* 内部用 Flex 布局，并且是纵向排列（比如上面是文件夹选择，下方是聊天区域）。 */
+            flex-direction: column;
+            height: 90vh;  /*高度为浏览器可视高度的 90%。*/
+            min-height: 0;   /*防止 Flex 子元素被内容撑爆，保证滚动条正常工作。 */
+        }
+
+        .chat-container {
+            flex: 1;  /* 占据主内容区剩余的空间（上方可能还有文件夹选择器等）。 */
+            display: flex;  /* 聊天区域内部再纵向排列（上面是消息区，下面是输入框）。 */
+            flex-direction: column;
+            min-height: 0;   /* 让消息区可以滚动，而不是把整个 .chat-container 撑开。 */
+        }
+
+        .messages-area {
+            flex: 1;  /* 占满 .chat-container 剩余空间（输入框高度是固定的，所以剩余的部分全留给消息区）。 */
+            overflow-y: auto;  /* 竖直方向加滚动条，消息很多时不会撑开整个布局，而是滚动查看。 */
+            border: 1px solid #ddd;  /* 边框浅灰色，让消息区和其他区域有视觉分隔感。 */
+            margin-bottom: 10px;  /* 底部留10px空隙（防止和输入框挤一块）。 */
+            min-height: 200px;  /* 即使消息很少，区域高度也不会小于 200px，让界面比例更好看。 */
+            padding: 5px;  /* 内边距 5px，让文字不紧贴边框。*/
+            background: #fff;/*背景白色，和外部灰色背景形成层次感。*/
+        }
+
+        .message {
+            margin-bottom: 8px;
+        } /* 每条消息之间有8像素的间距，不会挤在一起 */
+
+
+
+        .message-user .message-content {
+            background: #007bff;/* 明亮的蓝色（Bootstrap主色），用户自己发的消息，醒目。 */
+            color: #fff;/* 文字白色，对比度高。 */
+            border-radius: 5px;/* 四角圆润，变成气泡样式。 */
+            padding: 10px;/* 内容内外留10px，让气泡更圆润饱满。内边距 10px，让文字和边界之间有缓冲空间。 */
+            margin-left: auto;/* 右对齐，让气泡贴右边显示。 */
+            max-width: 60%;  /* 限制最大宽度为 60%，避免长消息横跨整个屏幕。 */
+            min-width: 60px; /* 最窄60像素，短消息气泡不会太瘦 */
+            text-align: left;/* 文字内容左对齐。 */
+            border: none;  /* 无边框。 */
+            display: inline-block;  /* 宽度跟随内容，不会自动占满一行。 */
+        }
+
+        .message-assistant .message-content {
+            background: #eee;  /* AI 消息用浅灰色，和用户蓝色区分。 */
+            color: #222;  /* 深灰文字，视觉柔和，不刺眼。 */
+            border-radius: 5px;/* 四角圆润，变成气泡样式。 */
+            padding: 10px;/* 内容内外留10px，让气泡更圆润饱满。 */
+            margin-right: auto;  /* AI 气泡靠左对齐。 */
+            max-width: 80%;  /*AI 回复可以更宽（80%），因为可能内容比较多。*/
+            border: none; /* 无边框，自适应宽度。 */
+            display: inline-block;
+        }
+
+        .message-time {
+            font-size: 10px; /* 时间戳很小，不打扰主要内容。 */
+            opacity: 0.6;  /* 半透明，进一步降低视觉权重 */
+            margin-top: 2px;  /* 与气泡主体稍微隔开2像素。 */
+        }
+
+        .input-area {
+            display: flex;  /* 横向flex布局，输入框和按钮并排。 */
+            gap: 5px;  /* 输入框和按钮间有5像素间隔。 */
+            padding: 5px;  /* 输入区内部留 5px 空隙。 */
+            border: 1px solid #ddd;  /* 边框。 */
+            background: #fafafa;  /* 比主内容区更浅的灰色，突出输入区域。 */
+        }
+
+        .message-input {
+            flex: 1;  /*输入框占满除按钮外的所有剩余空间。 */
+            padding: 6px; /* 内边距 6px，边框颜色稍深于 #ddd，让输入框边界更明显。 */
+            border: 1px solid #ccc;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+
+        .send-btn {
+            background: #007bff;  /* 蓝色按钮 */
+            color: white;  /* 图标/文字为白色。 */
+            border: none;  /* 无边框。 */
+            width: 32px; /* 按钮固定32*32像素，视觉协调，鼠标易于点击。 */
+            height: 32px;
+            cursor: pointer;/* 鼠标悬停时变“小手”，提示可点击。 */
+            border-radius: 8px;
+        }
+
+        .folder-selector,
+        .documents-tree,
+        .tree-header,
+        .tree-container,
+        .tree-item,
+        .logo {
+            margin-bottom: 8px;
+            font-size: 14px;
+        } /* 这几个区域底部统一留8像素空隙，字体大小14px（适合大部分副标题、项目名、树节点名）。 */
+
+        .tree-item {
+            cursor: pointer;  /* 悬停时变小手，提示可点击。 */
+            padding: 3px 0 3px 8px;
+        } /* 上下3像素，左边8像素缩进，树形更明显。 */
+
+        .tree-item.folder { font-weight: bold; }  /* 文件夹名称加粗，更醒目。 */
+        .tree-item.file { color: #666; }  /* 文件名称灰色（#666），次要一些。 */
+
+    </style>
+
+</head>
+
+<body>
+   
+    <div id="app">  <!-- 这是Vue的应用挂载点 所有页面内容都放在这个div里 Vue会自动管理这个区域内的内容 -->
+
+        <div class="app-container">  <!-- 页面主容器 用于横向flex布局 左侧是sidebar 右侧是主聊天区 -->
+            <!-- Sidebar -->
+            <div class="sidebar">  <!-- 左侧区域 宽度固定 白色背景 有边框 -->
+                <!-- Logo -->
+                <div class="logo">
+                    <h1><i class="fas fa-robot"></i> RAG Assistant</h1>  <!-- 机器人小图标 + Title -->
+                </div>
+
+                <!-- Document Tree -->
+                <div class="documents-tree">  <!-- 文档树区域 用来展示 管理所有上传/纳入RAG的文档 -->
+                    <div class="tree-header">  <!-- 文档树顶部header h3标题 带有文件夹图标和“Documents”文字 右侧是下载全部文档按钮 -->
+                        <h3><i class="fas fa-database"></i> Resource Library</h3>
+                        <button
+                                @click="downloadAllDocuments"
+                                :disabled="documents.length === 0 || isDownloading">  <!-- Vue语法糖 让disabled属性和变量联动 -->
+                                <!-- disabled: HTML标准button元素自带的属性 给button加上disabled 浏览器会自动让按钮变灰 不可点击 -->
+                            <i class="fas fa-download" v-if="!isDownloading"></i>  <!-- 只有当前不是下载中的状态时 这个下载图标才会显示 -->
+                            {{ isDownloading ? 'Downloading...' : 'Download' }}  <!-- 这是Vue的插值表达式 用于动态显示文本 -->
+                        </button>
+
+                    </div>
+                            <!-- {
+                                foo: { type: 'folder', ... },
+                                bar: { type: 'folder', ... },
+                                rootFiles: [...]
+                            }  -->
+                    <div class="tree-container">
+                        <div v-if="Object.keys(documentTree).length === 0">  <!-- Object.keys(XXX) 获取一个对象所有的“一级属性名” 并返回一个数组 -->
+                            <i class="fas fa-folder-open"></i>
+                            <p>No documents</p>
+                        </div>
+                       
+                        <div v-else>  <!-- 否则 就渲染真实的文档树结构 -->
+                            <!-- Root Directory -->
+                            <div class="tree-item folder" @click="toggleFolder('documents')">  <!-- 调用Vue里的toggleFolder方法 把'documents'这个文件夹的展开状态切换 -->
+                                <!-- 根据isFolderExpanded('documents') 是否为true 决定用“打开”还是“关闭”图标 -->
+                                <i :class="isFolderExpanded('documents') ? 'fas fa-folder-open' : 'fas fa-folder'"></i>
+                                <span>documents/</span>  <!-- 固定显示“documents/” -->
+                                <i class="fas" :class="isFolderExpanded('documents') ? 'fa-chevron-down' : 'fa-chevron-right'" style="margin-left: auto; font-size: 8px;"></i>  <!-- 右侧的小箭头图标 显示当前文件夹是展开 还是折叠 --> <!-- 让这个箭头靠右对齐 让箭头图标变小一点 -->
+                            </div>
+     
+                            <!-- Folder contents -->
+                            <template v-if="isFolderExpanded('documents')">  <!-- 只有当根目录 'documents' 处于“展开”状态时 才会渲染下一级的内容 --> 
+                                <template v-for="(item, key) in documentTree" :key="key">  <!-- key 是对象的每个一级属性名 item 是对应的内容 --> <!-- :key="key" Vue的最佳实践 每个v-for的元素都要有唯一key 方便高效更新 -->
+                                    <!-- 只渲染文件夹类型的条目 每个子文件夹都有左缩进15px 树形结构更明显 -->
+                                    <div v-if="item.type === 'folder'" class="tree-item folder"
+                                         :style="{paddingLeft: '15px'}"  
+                                         @click="toggleFolder('documents/' + key)">  <!-- 点击当前文件夹条目时 调用toggleFolder方法切换这个子文件夹的展开/收起状态 -->
+
+                                        <!-- 如果这个子文件夹是展开的 显示“打开的文件夹”图标 否则是“闭合的文件夹”图标 -->
+                                        <i :class="isFolderExpanded('documents/' + key) ? 'fas fa-folder-open' : 'fas fa-folder'"></i>
+                                        <span>{{ key }}/</span>  <!-- 显示当前文件夹名（带 / 结尾） -->
+                                        <i class="fas" 
+                                           :class="isFolderExpanded('documents/' + key) ? 'fa-chevron-down' : 'fa-chevron-right'" 
+                                           style="margin-left: auto; font-size: 8px;"></i>  <!-- 右侧小箭头，和之前一样：展开时向下，收起时向右 -->
+                                    </div>
+                                    
+                                   <!-- 遍历当前文件夹下所有的文件 每个文件用唯一文件名作为key 提升渲染效率 -->
+                                    <!-- 文件比文件夹再多缩进一层（30px）这样根目录文件夹是0px，子文件夹15px，文件30px，视觉上很清晰 -->
+                                    <!-- Files in folders -->  <!-- 只有点开了这个文件夹 下面的文件才会显示出来 -->
+                                    <template v-if="item.type === 'folder' && isFolderExpanded('documents/' + key)">   <!-- 只在两种情况下渲染: 当前遍历到的item必须是“文件夹”类型 这个文件夹现在处于“展开”状态 -->
+                                        <div v-for="file in item.files" :key="file.filename"  
+                                             class="tree-item file"
+                                             :style="{paddingLeft: '30px'}"> 
+                                            <i :class="getFileIconClass(file.file_type)"></i>  <!-- 两者class同时生效 --> <!-- 小图标显示文件类型 根据文件后缀返回不同的icon class -->
+                                            <span>{{ file.name }}</span>  <!-- 文件名展示 -->
+                                        </div>
+                                    </template>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Chat Header -->
+                <div>
+                    <h2><i class="fas fa-comments"></i> Chat</h2>
+                </div>
+
+                <!-- Chat Container -->
+                <div class="chat-container">
+                    <!-- Messages -->
+<!--                    这样 messagesArea.value 就是 DOM 节点对象，-->
+<!--                    可以直接用原生 DOM 操作它，比如 .scrollTop、.scrollHeight 等。-->
+                    <div class="messages-area" ref="messagesArea">
+                        <div v-if="messages.length === 0">  <!-- 只有messages数组为空 才显示这块内容 -->
+                            <i class="fas fa-comment-dots"></i>
+                            <h3>Start Conversation</h3>
+                            <p>Attention: The Conversation History Will be Collected by the Server for Studying</p>
+                        </div>
+                        <div v-for="(message, index) in messages" :key="index" 
+                             class="message" :class="'message-' + message.type">  <!-- message-user 或者 message-assistant -->
+                            <div class="message-content"> 
+                                <div v-if="message.type === 'user'">  
+                                    {{ message.content }}  <!-- 用户发的消息直接文本显示 -->
+                                </div>
+                                <div v-else v-html="message.type === 'assistant' ? marked.parse(message.content) : message.content"></div>  <!-- AI回复用v-html渲染 支持markdown 用marked.parse()转成安全的html -->
+                            </div>
+                            <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+                        </div>
+                        <div v-if="isLoading" class="message message-assistant">
+                            <div class="message-content">
+                                Thinking...
+                            </div> <!-- 只有AI正在回复时 才显示这个“虚拟气泡” -->
+                        </div>
+                    </div>
+
+                    <!-- Folder Selector -->
+                    <div class="folder-selector">
+                        <label for="folder-select">  <!-- for属性值对应下面select的id -->
+                            <i class="fas fa-folder"></i> Scope:
+                        </label>
+                        <!-- <select> 下拉选择框 让用户选择本次问题作用于哪个文件夹
+                        id="folder-select": 和label的for属性对应
+                        v-model="selectedFolder" Vue语法 双向绑定 你选择哪个文件夹 selectedFolder变量就自动更新 -->
+<!--                        v-model双向绑定：用户选中哪一项 selectedFolder（一个 ref('')）就自动变成对应值-->
+                        <select id="folder-select" v-model="selectedFolder" class="folder-select">
+                            <option value="">All Documents</option>
+
+                            <option v-for="folder in folders" :key="folder.folder_name" :value="folder.folder_name">   <!-- :value 这是 <option> 的值，配合上层 <select v-model="selectedFolder"> 使用-->
+                                {{ folder.folder_name }} ({{ folder.documents_count }} file)
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="input-area">
+                        <!-- type="text" 声明这是一个单行文本输入框
+                        v-model="currentMessage" Vue语法 数据双向绑定
+                        这里currentMessage是js中用ref声明的变量 输入框的内容会自动同步到currentMessage js里改currentMessage也能自动反映到input里
+                        .prevent会阻止表单的默认提交行为 比如页面刷新
+                        只有当isLoading为true时 输入框会变为禁用状态 -->
+                        <input type="text" 
+                               class="message-input"
+                               v-model="currentMessage"
+                               @keydown.enter.prevent="sendMessage"
+                               :placeholder="selectedFolder ? 'Ask a question from the expert engine: ' + selectedFolder + '...' : 'Ask a question from the global engine...'"
+                               :disabled="isLoading">
+                        <button class="send-btn" 
+                                @click="sendMessage"
+                                :disabled="isLoading || !currentMessage.trim()">
+                            <i class="fas fa-paper-plane" v-if="!isLoading"></i>  <!-- 正常状态显示“纸飞机”发送图标 发送中显示loading动画 -->
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // 从全局 Vue 对象里解构出几个常用 API
+        const { createApp, ref, onMounted, nextTick } = Vue;
+        createApp({  // 创建一个 Vue 应用实例（相当于入口）
+            // onMounted 生命周期函数 页面加载完成后自动运行（比如初始化拉数据）
+            // nextTick 等到 DOM 更新完再执行某个函数 有些场景比如滚动条 Vue不够智能 这时就会通过ref获取 DOM 节点 然后用原生 DOM API 去操作它 比如 .scrollTop
+            setup() {  // Vue3 推荐的逻辑入口 所有数据 方法都在这里定义 然后 return 出去给模板用
+                // ref 是 Vue3 的响应式变量声明api 当你修改用 ref 声明的变量时 页面会自动更新对应的内容
+                // 以后想改它的值 要用 count.value = 123
+                // Set 是 JavaScript 原生的数据结构 类似数组 但不允许重复值 而且查找/删除很快
+                // 因为 Vue3 对原生 Set 的响应式支持有限（直接 .add() 不会触发视图更新 所以存的时候用 ref 包起来 变成响应式引用 改变 Set 内容后 要重新 new Set(...) 一次 这样 Vue 才会检测到变化
+                // expandedFolders.value.add('documents/bar');
+                // expandedFolders.value = new Set(expandedFolders.value);
+                const documents = ref([]);
+                const documentTree = ref([]);
+                const folders = ref([]);
+                const selectedFolder = ref('');
+                const messages = ref([]);
+                const currentMessage = ref('');
+                const isLoading = ref(false);
+                const isDownloading = ref(false);        // 批量下载中状态（禁用下载按钮）
+                const conversationId = ref(null);        // 和后端保持会话状态的id（比如多轮对话）
+                const expandedFolders = ref(new Set());  // 存储“哪些文件夹是展开状态”的集合（Set对象）
+                const messagesArea = ref(null);          // 这里不是存字符串或数字 而是用来存 DOM 节点对象
+
+                // API base URL
+                const API_BASE = 'http://localhost:8000/api';
+
+                <!--Vue3里 JS 直接访问 DOM 元素 就要给它加个 ref, const里声明一下; Vue 会把对应的 DOM 节点自动赋值给 messagesArea.value-->
+                <!-- 这样 messagesArea.value 就是 DOM 节点对象，-->
+                <!--  可以直接用原生 DOM 操作它，比如 .scrollTop、.scrollHeight 等。-->
+
+                // 把聊天窗口（messagesArea）的滚动条直接拉到最底部 让最新消息总是可见
+                const scrollToBottom = () => {
+                    nextTick(() => {  // 等到 DOM 更新渲染完成以后再操作 DOM
+                        if (messagesArea.value) {  // 避免空指针错误
+                            // .scrollTop 当前滚动条顶部距离内容最上方的像素值（可写）。
+                            // scrollHeight 元素内容的总高度（只读 包含溢出不可见部分
+                            // .scrollTop = .scrollHeight 把滚动条直接拉到最底部
+                            messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
+                        }
+                    });
+                };
+
+                // documents 是一个数组，每个元素形如{filename: "reports/sales_q2.pdf",  file_size: 250000, upload_time: "xx", file_type: ".pdf"}
+                const buildDocumentTree = (documents) => {
+                    const tree = {};  // tree 用来保存最终的树结构
+                    const rootFiles = [];  // rootFiles 用来单独记录直接放在 documents 根目录下的文件
+                    
+                    documents.forEach(doc => {
+                        const pathParts = doc.filename.split('/');
+                        
+                        if (pathParts.length === 1) {
+                            rootFiles.push({
+                                type: 'file',
+                                name: pathParts[0],
+                                ...doc  // 把 doc 这个对象里的所有属性 file_size, file_type 展开复制到当前这个新对象rootFiles里
+                            });
+                            return;
+                        }
+
+                        // 后面会在循环里不断修改这个 currentLevel 的值 让它一步步“走进”树的更深层
+                        let currentLevel = tree;  // 必须用 let（允许改值）不能用 const（常量不能重新赋值）
+                        
+                        for (let i = 0; i < pathParts.length - 1; i++) {  // -1 是因为最后一项是文件名 不管文件名
+                            const folderName = pathParts[i];  // 取出当前这一层的文件夹名
+                            // 如果在当前层里还没有这个文件夹的节点 就创建一个
+                            if (!currentLevel[folderName]) {
+                                currentLevel[folderName] = {
+                                    type: 'folder',  // 标明是文件夹
+                                    name: folderName,  // 这个文件夹的名字
+                                    children: {},  // 里面还可以继续放子文件夹（用对象做字典）
+                                    files: []  // 这个文件夹“这一层”的文件列表
+                                };
+                            }
+                            currentLevel = currentLevel[folderName].children;  // 把“游标”推进到下一层 也就是刚才这个文件夹的 children 对象里 这样下一轮循环就会在它的 children 里继续找/建更深一层的文件夹 // 可以继续往里挂子文件夹或把文件放到这一层的位置。
+                        }
+
+
+                        // 把当前这个文件对象 doc 放进它所属文件夹的 files 数组里
+                        const fileName = pathParts[pathParts.length - 1];  // 取路径的最后一段作为文件名
+                        let targetFolder = tree;  // 从文档树的根开始准备“往里走
+                        for (let i = 0; i < pathParts.length - 1; i++) {
+                            targetFolder = targetFolder[pathParts[i]]; //  进入tree对象里 当前子文件夹的位置 我们要往那个files里添加东西
+                        }  // 这里少了.children 但是默认只有一层子文件夹 所以ok
+                        
+                        if (!targetFolder.files) {
+                            targetFolder.files = []  // 确保当前文件夹对象里有 files 数组可用
+                        }
+                        
+                        targetFolder.files.push({  // 把文件以 { type:'file', name, ...doc } 的格式挂到该目录的 files 里
+                            type: 'file',
+                            name: fileName,
+                            ...doc
+                        });
+                    });
+                    
+                    tree._rootFiles = rootFiles;  // 把之前单独记录的根目录文件挂在 tree._rootFiles 上（不过模板里其实没渲染它）
+                    return tree;
+                };
+
+                // 这两个函数只在 onMounted() 里被调用，不需要 return 暴露给模板。//
+                // Load documents
+                const loadDocuments = async () => {  // 定义一个异步箭头函数——因为里面要用 await 等待网络请求
+                    try {
+                        const response = await axios.get(`${API_BASE}/documents`);  // 发起 GET 请求
+                        documents.value = response.data;  // .data 是 Axios 响应对象上的一个属性 表示服务器返回的主体内容（response body）；data会是什么类型？取决于响应头和 responseType
+                        documentTree.value = buildDocumentTree(response.data);  // 之前定义好的复杂函数 一个documentTree结构
+                    } catch (error) {
+                        console.error('Failed to load documents:', error);
+                    }
+                };
+
+                // Load folders
+                const loadFolders = async () => {
+                    try {
+                        const response = await axios.get(`${API_BASE}/folders`);
+                        folders.value = response.data;
+                    } catch (error) {
+                        console.error('Failed to load folders:', error);
+                    }
+                };
+
+                // Get file icon
+                const getFileIconClass = (fileType) => {
+                    const iconMap = {
+                        '.pdf': 'fas fa-file-pdf',
+                        '.doc': 'fas fa-file-word',
+                        '.docx': 'fas fa-file-word',
+                        '.txt': 'fas fa-file-alt',
+                        '.md': 'fab fa-markdown',
+                        '.html': 'fab fa-html5'
+                    };
+                    return iconMap[fileType?.toLowerCase()] || 'fas fa-file';  // .? 安全措施 即使是null也不会报错
+                };
+
+                // Toggle folder
+                const toggleFolder = (folderPath) => {
+                    if (expandedFolders.value.has(folderPath)) {  
+                        expandedFolders.value.delete(folderPath);  //  如果folderPath在 说明它已经展开 再点一下要“折叠” 就删除
+                    } else {
+                        expandedFolders.value.add(folderPath);  // 如果folderPath不在 说明它是折叠的 再点一下要“展开” add
+                    }
+                    expandedFolders.value = new Set(expandedFolders.value);  // 由于 Vue3 对 Set 的响应性有限 重新new一下这个Set
+                };
+
+                // expandedFolders.value -> Set { 'documents', 'documents/foo' } 表示此时“根目录 documents 展开” “foo 文件夹也展开”
+
+                // Check if folder expanded
+                const isFolderExpanded = (folderPath) => {
+                    return expandedFolders.value.has(folderPath);  // 只用来判断当前文件夹是不是展开状态
+                };
+
+
+                let sendingInProgress = false;  // 声明一个普通变量 标记当前是否有消息正在发送 防止重复请求
+                const sendMessage = async () => {
+                    // 输入框内容为空 或者正在加载 或者已经有消息正在发送
+                    // .trim() 去除字符串两头的所有空格 防止只输了一堆空格也能发出去
+                    if (!currentMessage.value.trim() || isLoading.value || sendingInProgress) {  // !"" -> true; !"hihi" -> false
+                        return;  // 直接返回 不执行发送
+                    }
+                    
+                    sendingInProgress = true;  // 设为true 后面如果还点发送就会被拦截
+                    const userMessage = currentMessage.value.trim();  // 把当前文本去空格保存下来 后面要清空输入框 所以先存一份
+                    currentMessage.value = '';  // 拿到用户输入的消息 清空输入框
+                    
+                    messages.value.push({
+                        type: 'user',
+                        content: userMessage,
+                        timestamp: new Date()
+                    });  // 把用户刚发的消息对象 类型 user 内容 时间戳 加到messages
+
+                    scrollToBottom();  // 让消息区滚动到底部（内部 nextTick 等 DOM 更新后再滚）
+                    isLoading.value = true;  // 标记聊天区“正在回复”
+                    
+                    try {
+                        const chatData = {
+                            message: userMessage,
+                            conversation_id: conversationId.value  // 组织发送给后端的数据对象 包括消息内容 会话id id一开始就是 null
+                        };  // 这里的chatData就是组装后端声明的 class ChatMessage(BaseModel)
+                        
+                        if (selectedFolder.value) {  // 如果选择了检索范围（某个文件夹）就把 folder_name通过chatData.也传给后端 让RAG只在该范围检索
+                            chatData.folder_name = selectedFolder.value;
+                        }
+                        
+                        const response = await axios.post(`${API_BASE}/chat`, chatData);
+                        
+                        if (response.data.conversation_id) {
+                            conversationId.value = response.data.conversation_id;
+                        }  // 若后端返回了新的会话 ID（比如首次对话建立）就保存下来 以便下一轮继续同一会话上下文
+                        
+                        messages.value.push({
+                            type: 'assistant',
+                            content: response.data.response,
+                            timestamp: new Date()  // 这里在前端添加消息时 直接用 new Date() 生成一个当前本地时间的 Date 对象 作为消息的时间戳
+                        });  // 把后端返回的回复消息 加入消息列表
+
+                        scrollToBottom();
+
+                    } catch (error) {
+                        console.error('Failed to send message:', error);
+                    } finally {
+                        isLoading.value = false;
+                        sendingInProgress = false;
+                    }  // 无论成功失败 都要解除“加载中”和“发送中”状态 让用户可以继续发送下一条消息
+                };
+
+                // Format time
+                const formatTime = (date) => {
+                    return date.toLocaleTimeString('en-GB', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                };
+
+                // Download all documents
+                const downloadAllDocuments = async () => {
+                    if (documents.value.length === 0 || isDownloading.value) {
+                        return;  // 如果没有任何文档 直接返回 不执行下载; 如果当前正在下载中 也直接返回 防止重复下载
+                    }
+                    
+                    isDownloading.value = true;  // 标记为“下载中” 防止用户重复点击下载按钮
+                    
+                    try {  
+                        const response = await axios.get(`${API_BASE}/download/all`, {
+                            responseType: 'blob'  // 告诉 Axios 按二进制 Blob 接收响应体（否则默认会当 JSON/文本处理）
+                        });
+                        // response.data 就是zip包的二进制内容
+                        // 'application/zip' 指定了 Blob是压缩包类型 这样浏览器和操作系统识别这个文件时 会按 zip 来处理
+                        // Blob 构造函数要求第一个参数是一个数组
+                        // 把后端返回的二进制数据包成一个 Blob 对象。
+                        const blob = new Blob([response.data], { type: 'application/zip' });  // 把后端响应的二进制数据包装成一个 Blob 对象 前端的“二进制大文件”类型
+                        const url = window.URL.createObjectURL(blob);  // createObjectURL(blob) 生成一个临时的URL 浏览器能通过这个URL下载文件
+                        // 浏览器里“下载文件”其实就是靠点击 <a href="下载地址" download="文件名"> 标签实现的
+                        // 你自己用鼠标点 <a> 链接可以下载文件 但用 JS 造一个 a 标签 给它设置好 href要下载的文件 和 download文件名 再用 JS 自动“点一下” 
+                        const link = document.createElement('a');
+                        link.href = url;
+
+                        // 后端告知前端“文件名”
+                        const contentDisposition = response.headers['content-disposition'];
+                        let filename = 'documents.zip';
+                        if (contentDisposition) {  // 尝试从响应头 Content-Disposition 里解析文件名 而不用let filename = 'documents.zip';
+                            const filenameMatch = contentDisposition.match(/filename=(.+)/);  // 用正则表达式去匹配 filename= 后面的内容;     (.+) 捕获分组 匹配“任意字符，至少 1 个” 默认是贪婪的（会一直吃到字符串结束）
+                            if (filenameMatch) {
+                                filename = filenameMatch[1].replace(/"/g, '');  // filenameMatch[0] 整个匹配到的内容; filenameMatch[1]: 第一个括号 () 里的内容
+                            }  // /"/ 匹配一个双引号; /g 全局匹配 把引号去掉
+                        }
+                        
+                        link.download = filename;  // 后端传来的
+                        // 把 a 标签临时加到页面里 
+                        document.body.appendChild(link);
+                        // 用 JS 主动触发 click() 事件  模拟用户点击下载链接 自动弹出下载窗口
+                        link.click();
+                        // 下载完成后 把临时加上的 a 标签移除 页面上不会看到任何多余内容
+                        document.body.removeChild(link);
+                        // 释放之前用 createObjectURL 生成的临时链接 防止内存泄漏
+                        window.URL.revokeObjectURL(url);
+                        
+                    } catch (error) {
+                        console.error('Download failed:', error);
+                    } finally {
+                        isDownloading.value = false;  // 不管成功或失败 最后都把 isDownloading 置为 false
+                    }
+                };
+
+                // Initialize
+                onMounted(() => {  // ：生命周期函数，页面加载完成后自动运行（比如初始化拉数据）
+                    expandedFolders.value.add('documents');
+                    loadDocuments();
+                    loadFolders();
+                });
+
+                return {  // 在 setup() 里声明的所有变量/函数 只有被 return 出去的部分 页面 <template> 区域才能访问
+                    documents,
+                    documentTree,
+                    folders,
+                    selectedFolder,
+                    messages,
+                    currentMessage,
+                    isLoading,
+                    isDownloading,
+                    expandedFolders,
+                    getFileIconClass,
+                    toggleFolder,   
+                    isFolderExpanded,
+                    sendMessage,        
+                    formatTime,
+                    downloadAllDocuments,
+                    messagesArea,
+                    marked
+                };  // return 出去的内容是给模板 <template> 用的
+            }
+        }).mount('#app');  // 创建的 Vue 应用挂载到 <div id="app"> 上 模板从这一刻开始能访问 setup() return 出去的一切
+    </script>
+
+</body>
+</html>
