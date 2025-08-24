@@ -1,0 +1,96 @@
+INFO:     Started server process [1559]
+INFO:     Waiting for application startup.
+INFO:rag_system:Manually Set Random Seed: 42 in All Libraries.
+INFO:rag_system:Using the LLM API: gpt4o.
+INFO:rag_system:Detected Device in Current Environment: mps.
+INFO:sentence_transformers.SentenceTransformer:Load pretrained SentenceTransformer: BAAI/bge-large-en-v1.5
+INFO:sentence_transformers.SentenceTransformer:1 prompt is loaded, with the key: query
+INFO:__main__:🚀 Start Rebuild Index...
+Notice: The Index Will Be Rebuilt During This Run (Due To --rebuild-index Flag).
+FastAPI Server Root URL:       http://localhost:8000
+FastAPI API Documentation:     http://localhost:8000/docs
+Frontend Interface Entry:      http://localhost:8000/static/index.html
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:rag_system:Successfully Loaded 43 Document Pages.
+INFO:rag_system:There Were 43 Document Pages Before.
+INFO:rag_system:After Hash Deduplication, 43 Document Pages Remain.
+INFO:__main__:🚀 Start Rebuild Global Chat Engine Index...
+INFO:rag_system:Building New Index...
+INFO:rag_system:Firstly, Parse Document Page.
+INFO:rag_system:Document Pages Split Into 126 Nodes in 0.45 Seconds.
+INFO:rag_system:Secondly, Create Index.
+Generating embeddings:   0%|          | 0/126 [00:00<?, ?it/s]Generating embeddings:   8%|▊         | 10/126 [00:01<00:18,  6.38it/s]Generating embeddings:  16%|█▌        | 20/126 [00:02<00:15,  6.95it/s]Generating embeddings:  24%|██▍       | 30/126 [00:04<00:13,  7.29it/s]Generating embeddings:  32%|███▏      | 40/126 [00:05<00:11,  7.33it/s]Generating embeddings:  40%|███▉      | 50/126 [00:06<00:10,  7.35it/s]Generating embeddings:  48%|████▊     | 60/126 [00:08<00:08,  7.36it/s]Generating embeddings:  56%|█████▌    | 70/126 [00:09<00:07,  7.38it/s]Generating embeddings:  63%|██████▎   | 80/126 [00:10<00:06,  7.41it/s]Generating embeddings:  71%|███████▏  | 90/126 [00:12<00:04,  7.34it/s]Generating embeddings:  79%|███████▉  | 100/126 [00:13<00:03,  7.35it/s]Generating embeddings:  87%|████████▋ | 110/126 [00:15<00:02,  7.19it/s]Generating embeddings:  95%|█████████▌| 120/126 [00:16<00:00,  7.17it/s]Generating embeddings: 100%|██████████| 126/126 [00:17<00:00,  7.13it/s]Generating embeddings: 100%|██████████| 126/126 [00:17<00:00,  7.23it/s]
+INFO:rag_system:Thirdly, Save Index.
+Saving Index.:   0%|          | 0/1 [00:00<?, ?Step/s]Saving Index.: 100%|██████████| 1/1 [00:00<00:00,  4.56Step/s]                                                              INFO:rag_system:Build Global Index Successfully.
+INFO:rag_system:GLobal Index: Document Page Parsed, Vector Index Built, and Saved Successfully in 18.12 Seconds Totally.
+INFO:rag_system:Parsing in 0.45 Seconds,   Building in 17.44 Seconds,   Saving in 0.22 Seconds.
+INFO:rag_system:Global Chat Engine Created Successfully with Maximal 4000 MEMORY Tokens.
+INFO:__main__:Global Chat Engine Index Built Successfully with 43 Document Pages.
+INFO:__main__:🚀 Start Rebuild Folder Index for Expert Chat Engine...
+INFO:rag_system:Found 2 Folders: ['Enhanced Table Data', 'FDM Process Parameters'].
+INFO:rag_system:📊 START RECORD TIME ABOUT FOLDER INDEX.
+INFO:rag_system:📁 Processing Folder: 'Enhanced Table Data'.
+INFO:rag_system:🚀 Building Folder Index for Folder 'Enhanced Table Data'...
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:rag_system:Read 1 Document Pages in 0.20 Seconds under Current Folder 'Enhanced Table Data'.
+INFO:rag_system:Firstly, Parse Document Pages under Current Folder.
+INFO:rag_system:Document Pages Split Into 4 Nodes in 0.00 Seconds under Current Folder 'Enhanced Table Data'.
+INFO:rag_system:Secondly, Create Folder Index under Current Folder.
+Generating embeddings:   0%|          | 0/4 [00:00<?, ?it/s]Generating embeddings: 100%|██████████| 4/4 [00:00<00:00,  6.43it/s]Generating embeddings: 100%|██████████| 4/4 [00:00<00:00,  6.43it/s]
+INFO:rag_system:Thirdly, Save Folder Index under Current Folder.
+INFO:rag_system:Already Build Folder Index for Folder 'Enhanced Table Data' Successfully.
+INFO:rag_system:Total Time: 0.84 Seconds,   Read Time: 0.20 Seconds,   Parsed Time: 0.00 Seconds,   Built Time: 0.62 Seconds,   Saved Time: 0.01 Seconds.
+INFO:rag_system:📁 Processing Folder: 'FDM Process Parameters'.
+INFO:rag_system:🚀 Building Folder Index for Folder 'FDM Process Parameters'...
+INFO:rag_system:Read 42 Document Pages in 2.26 Seconds under Current Folder 'FDM Process Parameters'.
+INFO:rag_system:Firstly, Parse Document Pages under Current Folder.
+INFO:rag_system:Document Pages Split Into 124 Nodes in 0.05 Seconds under Current Folder 'FDM Process Parameters'.
+INFO:rag_system:Secondly, Create Folder Index under Current Folder.
+Generating embeddings:   0%|          | 0/124 [00:00<?, ?it/s]Generating embeddings:   8%|▊         | 10/124 [00:01<00:16,  7.01it/s]Generating embeddings:  16%|█▌        | 20/124 [00:02<00:14,  7.26it/s]Generating embeddings:  24%|██▍       | 30/124 [00:04<00:12,  7.34it/s]Generating embeddings:  32%|███▏      | 40/124 [00:05<00:11,  7.41it/s]Generating embeddings:  40%|████      | 50/124 [00:06<00:10,  7.33it/s]Generating embeddings:  48%|████▊     | 60/124 [00:08<00:09,  7.05it/s]Generating embeddings:  56%|█████▋    | 70/124 [00:09<00:07,  7.14it/s]Generating embeddings:  65%|██████▍   | 80/124 [00:11<00:06,  7.24it/s]Generating embeddings:  73%|███████▎  | 90/124 [00:12<00:04,  7.13it/s]Generating embeddings:  81%|████████  | 100/124 [00:13<00:03,  7.27it/s]Generating embeddings:  89%|████████▊ | 110/124 [00:15<00:01,  7.15it/s]Generating embeddings:  97%|█████████▋| 120/124 [00:16<00:00,  7.12it/s]Generating embeddings: 100%|██████████| 124/124 [00:17<00:00,  6.96it/s]Generating embeddings: 100%|██████████| 124/124 [00:17<00:00,  7.15it/s]
+INFO:rag_system:Thirdly, Save Folder Index under Current Folder.
+INFO:rag_system:Already Build Folder Index for Folder 'FDM Process Parameters' Successfully.
+INFO:rag_system:Total Time: 19.90 Seconds,   Read Time: 2.26 Seconds,   Parsed Time: 0.05 Seconds,   Built Time: 17.36 Seconds,   Saved Time: 0.22 Seconds.
+INFO:rag_system:DETAILED TIMING REPORT FOR FOLDER INDEX.
+INFO:rag_system:📁 Folder FDM Process Parameters, TOTAL BUILT TIME:  19.90s, PAGE COUNT:  42, NODE COUNT:   124, READ TIME: 2.26s, PARSE TIME: 0.05s, CREATE INDEX TIME: 17.36s, SAVE TIME: 0.22s.
+INFO:rag_system:📁 Folder Enhanced Table Data , TOTAL BUILT TIME:   0.84s, PAGE COUNT:   1, NODE COUNT:     4, READ TIME: 0.20s, PARSE TIME: 0.00s, CREATE INDEX TIME: 0.62s, SAVE TIME: 0.01s.
+INFO:rag_system:📊 STATISTICS SUMMARY FOR FOLDER INDEX.
+INFO:rag_system:✅ Total Time Taken:                20.73 Seconds.
+INFO:rag_system:✅ Total Folder Processed:          2.
+INFO:rag_system:✅ Total Folder Index Built/Loaded: 2.
+INFO:rag_system:✅ Total Folder Index:              2.
+INFO:rag_system:✅ Total Document Page Processed:   43.
+INFO:rag_system:✅ Total Node Created:              128.
+INFO:__main__:Folder Index Built Successfully for Expert Chat Engine from Folders: ['Enhanced Table Data', 'FDM Process Parameters'].
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
+INFO:     ::1:49725 - "GET /api/documents HTTP/1.1" 200 OK
+INFO:     ::1:49726 - "GET /api/folders HTTP/1.1" 200 OK
+INFO:     ::1:49726 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:rag_system:🚀 Expert Chat Engine for Folder 'Enhanced Table Data' Created Successfully.
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:__main__:Generating Response from Enhanced Table Data Folder Index Time: 1.808 Seconds.
+INFO:__main__:Conversation History Saved with ID: a00da92d-64dc-41f9-8a91-ae30d0aec14d.
+INFO:     ::1:49726 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:__main__:Generating Response from Enhanced Table Data Folder Index Time: 1.299 Seconds.
+INFO:__main__:Conversation History Saved with ID: a00da92d-64dc-41f9-8a91-ae30d0aec14d.
+INFO:     ::1:49730 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:__main__:Generating Response from Enhanced Table Data Folder Index Time: 1.318 Seconds.
+INFO:__main__:Conversation History Saved with ID: a00da92d-64dc-41f9-8a91-ae30d0aec14d.
+INFO:     ::1:49730 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:__main__:Generating Response from Enhanced Table Data Folder Index Time: 1.471 Seconds.
+INFO:__main__:Conversation History Saved with ID: a00da92d-64dc-41f9-8a91-ae30d0aec14d.
+INFO:     ::1:49730 - "POST /api/chat HTTP/1.1" 200 OK

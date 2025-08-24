@@ -1,0 +1,75 @@
+INFO:     Started server process [3174]
+INFO:     Waiting for application startup.
+INFO:rag_system:Manually Set Random Seed: 42 in All Libraries.
+INFO:rag_system:Using the LLM API: gpt4o.
+INFO:rag_system:Detected Device in Current Environment: mps.
+INFO:sentence_transformers.SentenceTransformer:Load pretrained SentenceTransformer: BAAI/bge-large-en-v1.5
+INFO:sentence_transformers.SentenceTransformer:1 prompt is loaded, with the key: query
+INFO:__main__:This Run Will Attempt to Load the Existing (Folder) Index to Create Global Chat Engine and Expert Chat Engine.
+INFO:rag_system:Loading Existing Index for Global Chat Engine...
+INFO:llama_index.core.indices.loading:Loading all indices.
+INFO:rag_system:Loaded Existing Index for Global Chat Engine in 25.13 Seconds.
+INFO:rag_system:Global Chat Engine Created Successfully with Maximal 4000 MEMORY Tokens.
+INFO:__main__:Global Chat Engine Created Successfully.
+INFO:rag_system:Found 3 Folders: ['General Knowledge of PLA and Fillers', 'General Knowledge of PLA Itself', 'FDM Process Parameters'].
+INFO:rag_system:📊 START RECORD TIME ABOUT FOLDER INDEX.
+INFO:rag_system:📁 Processing Folder: 'General Knowledge of PLA and Fillers'.
+INFO:rag_system:Loading Existing Folder Index for Folder 'General Knowledge of PLA and Fillers'...
+INFO:llama_index.core.indices.loading:Loading all indices.
+INFO:rag_system:Loaded Existing Folder Index for Folder 'General Knowledge of PLA and Fillers' Successfully.
+INFO:rag_system:Load Time: 10.96 Seconds,   Total Time: 10.96 Seconds.
+INFO:rag_system:📁 Processing Folder: 'General Knowledge of PLA Itself'.
+INFO:rag_system:Loading Existing Folder Index for Folder 'General Knowledge of PLA Itself'...
+INFO:llama_index.core.indices.loading:Loading all indices.
+INFO:rag_system:Loaded Existing Folder Index for Folder 'General Knowledge of PLA Itself' Successfully.
+INFO:rag_system:Load Time: 13.00 Seconds,   Total Time: 13.00 Seconds.
+INFO:rag_system:📁 Processing Folder: 'FDM Process Parameters'.
+INFO:rag_system:Loading Existing Folder Index for Folder 'FDM Process Parameters'...
+INFO:llama_index.core.indices.loading:Loading all indices.
+INFO:rag_system:Loaded Existing Folder Index for Folder 'FDM Process Parameters' Successfully.
+INFO:rag_system:Load Time: 13.37 Seconds,   Total Time: 13.37 Seconds.
+INFO:rag_system:DETAILED TIMING REPORT FOR FOLDER INDEX.
+INFO:rag_system:📊 STATISTICS SUMMARY FOR FOLDER INDEX.
+INFO:rag_system:✅ Total Time Taken:                37.33 Seconds.
+INFO:rag_system:✅ Total Folder Processed:          3.
+INFO:rag_system:✅ Total Folder Index Built/Loaded: 3.
+INFO:rag_system:✅ Total Folder Index:              3.
+INFO:rag_system:✅ Total Document Page Processed:   0.
+INFO:rag_system:✅ Total Node Created:              0.
+INFO:__main__:Folder Index Loaded Successfully from Folders: ['General Knowledge of PLA and Fillers', 'General Knowledge of PLA Itself', 'FDM Process Parameters'].
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
+FastAPI Server Root URL:       http://localhost:8000
+FastAPI API Documentation:     http://localhost:8000/docs
+Frontend Interface Entry:      http://localhost:8000/static/index.html
+Loading llama_index.core.storage.kvstore.simple_kvstore from storage/docstore.json.
+Loading llama_index.core.storage.kvstore.simple_kvstore from storage/index_store.json.
+Loading llama_index.core.storage.kvstore.simple_kvstore from storage/index_General Knowledge of PLA and Fillers/docstore.json.
+Loading llama_index.core.storage.kvstore.simple_kvstore from storage/index_General Knowledge of PLA and Fillers/index_store.json.
+Loading llama_index.core.storage.kvstore.simple_kvstore from storage/index_General Knowledge of PLA Itself/docstore.json.
+Loading llama_index.core.storage.kvstore.simple_kvstore from storage/index_General Knowledge of PLA Itself/index_store.json.
+Loading llama_index.core.storage.kvstore.simple_kvstore from storage/index_FDM Process Parameters/docstore.json.
+Loading llama_index.core.storage.kvstore.simple_kvstore from storage/index_FDM Process Parameters/index_store.json.
+INFO:     ::1:52816 - "GET /api/documents HTTP/1.1" 200 OK
+INFO:     ::1:52817 - "GET /api/folders HTTP/1.1" 200 OK
+INFO:rag_system:🚀 Expert Chat Engine for Folder 'FDM Process Parameters' Created Successfully.
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:__main__:Generating Response from FDM Process Parameters Folder Index Time: 5.479 Seconds.
+INFO:__main__:Conversation History Saved with ID: ec5f6d6b-8f55-44e9-ab8a-e5b7b1c440a2.
+INFO:     ::1:52819 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:__main__:Generating Response from FDM Process Parameters Folder Index Time: 3.106 Seconds.
+INFO:__main__:Conversation History Saved with ID: ec5f6d6b-8f55-44e9-ab8a-e5b7b1c440a2.
+INFO:     ::1:52819 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:__main__:Generating Response from FDM Process Parameters Folder Index Time: 4.274 Seconds.
+INFO:__main__:Conversation History Saved with ID: ec5f6d6b-8f55-44e9-ab8a-e5b7b1c440a2.
+INFO:     ::1:52819 - "POST /api/chat HTTP/1.1" 200 OK
