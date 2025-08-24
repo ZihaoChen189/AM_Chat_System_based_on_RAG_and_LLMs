@@ -1,0 +1,13 @@
+{
+  "conversation_id": "adf1e8db-b8dd-4a8c-888b-c071b5fddb9e",
+  "created_at": "2025-08-06T16:03:44.847769",
+  "messages": [
+    {
+      "timestamp": "2025-08-06T16:03:44.847795",
+      "user_message": "What is Fused Deposition Modelling (FDM) technology and how is it related to polylactic acid (PLA)?",
+      "assistant_response": "Fused Deposition Modelling (FDM) is an additive manufacturing technique widely used for creating functional parts. It is valued for its ability to produce neat and intricate parts at a relatively low cost, making it popular in industries such as aerospace, automotive, and bio-medicals. FDM works by selectively dispensing a thermoplastic polymer through a nozzle to build parts layer by layer.\n\nPolylactic acid (PLA) is one of the most commonly used materials in FDM technology. It is an aliphatic polyester and a biocompatible thermoplastic known for its eco-friendly properties, as it degrades into water and carbon dioxide, which are not harmful to the environment. PLA is favored in FDM due to its low melting point, non-toxic nature, and good mechanical properties compared to other plastics. However, it does have limitations in terms of mechanical strength, which can be addressed through filler reinforcement to enhance the quality of FDM-printed parts. PLA's renewability, compostability, and biocompatibility make it a favorable alternative to fossil-based polymers in certain applications [reference_189.pdf; reference_188.pdf; reference_184.pdf].",
+      "folder_name": null
+    }
+  ],
+  "updated_at": "2025-08-06T16:03:44.847800"
+}

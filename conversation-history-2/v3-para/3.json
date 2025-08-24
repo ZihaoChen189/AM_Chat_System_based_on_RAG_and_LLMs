@@ -1,0 +1,25 @@
+{
+  "conversation_id": "8ef47eae-6c5e-4eae-92bb-07ca50465071",
+  "created_at": "2025-08-07T19:00:02.224067",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T19:00:02.224091",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite?",
+      "assistant_response": "Based on the retrieved documents, the appropriate nozzle temperature for 3D printing PLA-Akermanite composites using fused deposition modeling (FDM) is **210°C**. This temperature was used for printing composite scaffolds with 70% porosity, a nozzle diameter of 400 μm, and a layer thickness of 400 μm at a printing speed of 10 mm/s [reference_117.pdf, page_label: 2]. \n\nAnother document also mentions using a 3D printer (Prusa i3 MK3) for PLA-Akermanite composites but does not specify the exact nozzle temperature [reference_108.pdf, page_label: 14542]. \n\nFor this specific case, the documented temperature is **210°C**.",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T19:00:12.661466",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite?",
+      "assistant_response": "The appropriate printing speed for 3D printing PLA-Akermanite composites using fused deposition modeling (FDM) is **10 mm/s**. This speed was used with a nozzle temperature of 210°C, a nozzle diameter of 400 μm, and a layer thickness of 400 μm to fabricate scaffolds with 70% porosity [reference_117.pdf, page_label: 2].  \n\nNo other printing speeds for PLA-Akermanite composites were mentioned in the retrieved documents.",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T19:00:22.797391",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Akermanite?",
+      "assistant_response": "The appropriate layer height for 3D printing PLA-Akermanite composites using fused deposition modeling (FDM) is **400 μm** (0.4 mm). This was used with a nozzle diameter of 400 μm, a printing speed of 10 mm/s, and a nozzle temperature of 210°C to fabricate scaffolds with 70% porosity [reference_117.pdf, page_label: 2].  \n\nNo other layer heights for PLA-Akermanite composites were mentioned in the retrieved documents.",
+      "folder_name": "FDM Process Parameters"
+    }
+  ],
+  "updated_at": "2025-08-07T19:00:22.797415"
+}

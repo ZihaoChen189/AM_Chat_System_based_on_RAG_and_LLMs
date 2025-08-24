@@ -1,0 +1,37 @@
+{
+  "conversation_id": "22c30d93-3a27-4998-a787-ccbbaef49a1f",
+  "created_at": "2025-08-07T04:05:17.358452",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T04:05:17.358477",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon?",
+      "assistant_response": "The appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Fibre (CF) is 205, 215, or 225°C. For PLA mixed with continuous carbon fibre (CCF) or short carbon fibre (SCF), the nozzle temperature is 210 or 250°C. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T04:05:20.724997",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon?",
+      "assistant_response": "The appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Fibre (CF) is 60, 80, or 100 mm/s. For PLA mixed with continuous carbon fibre (CCF) or short carbon fibre (SCF), the printing speed is 3.0 or 25 mm/s. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T04:05:23.598886",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon?",
+      "assistant_response": "The appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Fibre (CF) is 0.1, 0.2, or 0.3 mm. For PLA mixed with continuous carbon fibre (CCF) or short carbon fibre (SCF), the layer height is 0.2 or 0.5 mm. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T04:05:27.584583",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon?",
+      "assistant_response": "The document does not provide specific information about the bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Fibre (CF). However, for PLA mixed with continuous carbon fibre (CCF) or short carbon fibre (SCF), the bed temperature is 60, 75, or 90°C. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T04:05:32.399743",
+      "user_message": "What is the appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon?",
+      "assistant_response": "The appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Fibre (CF) is 0.4 mm. For PLA mixed with continuous carbon fibre (CCF) or short carbon fibre (SCF), the nozzle diameter is 0.4 or 1.5 mm. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    }
+  ],
+  "updated_at": "2025-08-07T04:05:32.399762"
+}
