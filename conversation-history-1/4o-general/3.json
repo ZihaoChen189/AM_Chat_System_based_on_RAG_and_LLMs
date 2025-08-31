@@ -1,0 +1,25 @@
+{
+  "conversation_id": "cdeed665-db28-49cb-86e3-3368a77674f9",
+  "created_at": "2025-08-07T00:15:30.557780",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T00:15:30.557791",
+      "user_message": "How does nozzle diameter affect fused deposition modelling (FDM)-printed polylactic acid (PLA) parts?",
+      "assistant_response": "The nozzle diameter affects FDM-printed PLA parts in several ways. A higher nozzle diameter implies a greater distance between filaments, resulting in larger pore sizes to achieve a certain infill value. This affects the porosity and pore size of the printed parts. Additionally, increasing the nozzle diameter and layer thickness can increase the printing time. These parameters are crucial for selecting proper printing conditions to obtain desired pore size and porosity values in FDM-printed parts with a rectilinear pattern [reference_112.pdf, pages 288-289; reference_187.pdf, page 3].",
+      "folder_name": null
+    },
+    {
+      "timestamp": "2025-08-07T00:15:34.509845",
+      "user_message": "How does the printing speed during fused deposition modelling (FDM) affect the quality of polylactic acid (PLA) products?",
+      "assistant_response": "The printing speed during FDM significantly affects the quality of PLA products. Research indicates that the strength of samples decreases with increasing speed. Specifically, in the range of 50-80 mm/s, the strength of the specimens remains at a similar level, but above 80 mm/s, it decreases significantly. This suggests that higher printing speeds may lead to reduced mechanical strength in the printed parts [reference_130.pdf, page 1].",
+      "folder_name": null
+    },
+    {
+      "timestamp": "2025-08-07T00:15:39.756715",
+      "user_message": "How does the printing direction in fused deposition modelling (FDM) influence the properties of polylactic acid (PLA) products?",
+      "assistant_response": "The printing direction in FDM has a significant influence on the mechanical properties of PLA products. Research shows that the Y-axis orientation presents the best mechanical properties for PLA. This suggests that the orientation of the print can affect attributes such as Young’s modulus, yield strength, and ultimate strength of the final part. Therefore, selecting the appropriate printing direction is crucial for optimizing the strength and overall quality of FDM-printed PLA parts [reference_141.pdf, page 35].",
+      "folder_name": null
+    }
+  ],
+  "updated_at": "2025-08-07T00:15:39.756725"
+}

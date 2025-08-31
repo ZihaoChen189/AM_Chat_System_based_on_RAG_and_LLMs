@@ -1,0 +1,37 @@
+{
+  "conversation_id": "5d92b97b-09cd-44f3-af32-5827cf5f0591",
+  "created_at": "2025-08-07T03:55:38.682235",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T03:55:38.682251",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN)?",
+      "assistant_response": "The appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN) is 220°C. This information is sourced from the document \"Enhanced_Table_Data.html\" in the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T03:55:42.338493",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN)?",
+      "assistant_response": "The appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN) is 2400 mm/min. This information is sourced from the document \"Enhanced_Table_Data.html\" in the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T03:55:46.038517",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN)?",
+      "assistant_response": "The appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN) is 0.2 mm. This information is sourced from the document \"Enhanced_Table_Data.html\" in the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T03:55:49.359680",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN)?",
+      "assistant_response": "The appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN) is 70°C. This information is sourced from the document \"Enhanced_Table_Data.html\" in the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T03:55:53.100888",
+      "user_message": "What is the appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN)?",
+      "assistant_response": "The appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with carbonised cellulose nanofibers (CCN) is 0.4 mm. This information is sourced from the document \"Enhanced_Table_Data.html\" in the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    }
+  ],
+  "updated_at": "2025-08-07T03:55:53.100908"
+}

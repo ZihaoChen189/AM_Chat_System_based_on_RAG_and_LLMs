@@ -1,0 +1,37 @@
+{
+  "conversation_id": "6214fded-175b-4e60-be5a-9aa14a6820cd",
+  "created_at": "2025-08-07T03:07:41.541185",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T03:07:41.541209",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF)?",
+      "assistant_response": "I do not know. The retrieved documents do not provide specific information about the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF).",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T03:07:48.596074",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF)?",
+      "assistant_response": "I do not know. The retrieved documents do not provide specific information about the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF).",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T03:07:51.043703",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF)?",
+      "assistant_response": "I do not know. The retrieved documents do not provide specific information about the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF).",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T03:07:54.841773",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF)?",
+      "assistant_response": "I do not know. The retrieved documents do not provide specific information about the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF).",
+      "folder_name": "FDM Process Parameters"
+    },
+    {
+      "timestamp": "2025-08-07T03:07:58.626307",
+      "user_message": "What is the appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF)?",
+      "assistant_response": "I do not know. The retrieved documents do not provide specific information about the appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous flax fibre (cFF).",
+      "folder_name": "FDM Process Parameters"
+    }
+  ],
+  "updated_at": "2025-08-07T03:07:58.626319"
+}

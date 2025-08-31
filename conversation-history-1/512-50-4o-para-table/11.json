@@ -1,0 +1,31 @@
+{
+  "conversation_id": "219a4899-68de-4661-bb9f-72f895c146be",
+  "created_at": "2025-08-07T04:03:39.254602",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T04:03:39.254620",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF)?",
+      "assistant_response": "The appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF) is 210°C or 250°C, as per the document source [Enhanced_Table_Data.html].",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T04:03:42.018623",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF)?",
+      "assistant_response": "The appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF) is 3.0 mm/s or 25 mm/s, according to the document source [Enhanced_Table_Data.html].",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T04:03:45.576058",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF)?",
+      "assistant_response": "The appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF) is 0.2 mm or 0.5 mm, as per the document source [Enhanced_Table_Data.html].",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T04:03:49.187104",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF)?",
+      "assistant_response": "The appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF) is 60°C, 75°C, or 90°C, according to the document source [Enhanced_Table_Data.html].",
+      "folder_name": "Enhanced Table Data"
+    }
+  ],
+  "updated_at": "2025-08-07T04:03:49.187123"
+}

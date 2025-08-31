@@ -1,0 +1,61 @@
+{
+  "conversation_id": "f36cfe09-bd6b-45e1-af9a-237f99e7dbb3",
+  "created_at": "2025-08-07T17:19:07.482586",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T17:19:07.482603",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF)?",
+      "assistant_response": "The appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF) is 210°C to 250°C. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:19:10.239820",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF)?",
+      "assistant_response": "The appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF) is 3.0 mm/s to 25 mm/s. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:19:12.907786",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF)?",
+      "assistant_response": "The appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF) is 0.2 mm to 0.5 mm. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:19:16.696278",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF)?",
+      "assistant_response": "The appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with short carbon fibre (SCF) is 60°C to 90°C. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:19:19.973104",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black?",
+      "assistant_response": "The appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black is 230°C. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:19:23.761238",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black?",
+      "assistant_response": "The appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black is 30 mm/s. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:19:27.343462",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black?",
+      "assistant_response": "The appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black is 0.2 mm. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:19:33.715225",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black?",
+      "assistant_response": "The appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black is 60°C. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:19:35.429795",
+      "user_message": "What is the appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black?",
+      "assistant_response": "The appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with Carbon Black is 0.4 mm. This information is sourced from the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    }
+  ],
+  "updated_at": "2025-08-07T17:19:35.429806"
+}

@@ -1,0 +1,37 @@
+{
+  "conversation_id": "22e56d99-ee8c-4a8b-97da-129a8eef25d9",
+  "created_at": "2025-08-07T17:14:55.587028",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T17:14:55.587047",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder?",
+      "assistant_response": "The appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder is 230°C, as per the data in the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:15:05.202442",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder?",
+      "assistant_response": "The appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder is 30 mm/s, according to the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:15:09.092143",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder?",
+      "assistant_response": "The appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder is 0.4 mm, as indicated in the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:15:13.702460",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder?",
+      "assistant_response": "The appropriate platform (bed) temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder is 60°C, according to the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T17:15:18.305610",
+      "user_message": "What is the appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder?",
+      "assistant_response": "The appropriate nozzle diameter for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with cork powder is 0.8 mm, as per the \"Enhanced Table Data\" document.",
+      "folder_name": "Enhanced Table Data"
+    }
+  ],
+  "updated_at": "2025-08-07T17:15:18.305617"
+}

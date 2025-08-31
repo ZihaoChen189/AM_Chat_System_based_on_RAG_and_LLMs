@@ -1,0 +1,31 @@
+{
+  "conversation_id": "5189a575-beb7-4b3a-a0e5-1bb2d2b18c99",
+  "created_at": "2025-08-07T15:53:57.202347",
+  "messages": [
+    {
+      "timestamp": "2025-08-07T15:53:57.202394",
+      "user_message": "What is the appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous carbon fibre (CCF)?",
+      "assistant_response": "The appropriate nozzle temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous carbon fibre (CCF) is 210°C to 250°C, as per the data in the document \"Enhanced_Table_Data.html\" from the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T15:54:00.260031",
+      "user_message": "What is the appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous carbon fibre (CCF)?",
+      "assistant_response": "The appropriate printing speed for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous carbon fibre (CCF) is 3.0 mm/s to 25 mm/s, according to the document \"Enhanced_Table_Data.html\" from the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T15:54:03.127857",
+      "user_message": "What is the appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous carbon fibre (CCF)?",
+      "assistant_response": "The appropriate layer height for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous carbon fibre (CCF) is 0.2 mm to 0.5 mm, as stated in the document \"Enhanced_Table_Data.html\" from the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    },
+    {
+      "timestamp": "2025-08-07T15:54:06.975897",
+      "user_message": "What is the appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous carbon fibre (CCF)?",
+      "assistant_response": "The appropriate bed or platform temperature for 3D printing using fused deposition modeling with polylactic acid (PLA) mixed with continuous carbon fibre (CCF) is 60°C to 90°C, according to the document \"Enhanced_Table_Data.html\" from the 'Enhanced Table Data' folder.",
+      "folder_name": "Enhanced Table Data"
+    }
+  ],
+  "updated_at": "2025-08-07T15:54:06.975921"
+}
