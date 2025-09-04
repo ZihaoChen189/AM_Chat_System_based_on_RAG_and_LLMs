@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 
+    name="viewport" specifies viewport settings for the browser (i.e., the visible area of the webpage in the browser window)
+    content="width=device-width" sets the page width to the actual device screen width, instead of using a default like 980px or a virtual width
+    initial-scale=1.0 means the initial zoom level is 1 (no zoom in or out on page loaded) -->
+
+    <!-- These are called CDN links, meaning third-party libraries loaded online.
+    Unlike 'install', here we directly include them via script/link tags, which is the simplest way.
+    As long as the CDN is available, you don't need to download or configure anything—just use it directly. -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Chat System</title>
+    <!-- Vue 3-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- HTTP requests with the backend -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- Rendering Markdown in HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Font Awesome 6, icon-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;              /* Page background color: light gray */
+        }
+       
+        .app-container {
+            max-width: 1200px;   /* Limit the maximum width to 1200px to avoid stretching content on ultra-wide screens. */
+            padding: 20px;   /* Add 20px padding around the content for a more comfortable look. */
+            display: flex;  /* Set .app-container as a flex container for horizontal layout (sidebar + main content). */
+            gap: 10px;  /* 10px gap between flex items. */
+            border-radius: 16px;  /* Rounded corners for a softer UI. */
+            overflow: hidden;   /* Clip content that overflows the container, preserving rounded corners. */
+            
+        }
+
+        .logo { text-align: center; }     /* Center the logo text horizontally */
+
+        .sidebar {
+            width: 300px;  /* Fixed sidebar width (300px), does not resize. */
+            background: #fff;  /* Pure white background. */
+            border: 1px solid #ddd; /* Light gray border for separation from main content. */
+            padding: 20px;   /* 20px padding inside the sidebar. */
+        }
+
+        .main-content {
+            flex: 1;  /* Occupies all remaining space except for sidebar. */
+            background: #f8f8f8;   /* Slightly darker gray for contrast with sidebar. */
+            border: 1px solid #ddd;   /* Light gray border, matching sidebar. */
+            padding: 10px; /* 10px padding to prevent content from sticking to the edge. */
+            display: flex;  /* Internal flex layout, column direction. */
+            flex-direction: column;
+            height: 90vh;   /* 90% of the viewport height. */
+            min-height: 0;   /* Prevent content from overflowing, ensure scrollbars work. */
+        }
+
+        .chat-container {
+            flex: 1;  /* Fill up the remaining space in main content area. */
+            display: flex;  /* Internal flex layout, column direction (messages area + input area). */
+            flex-direction: column;
+            min-height: 0;   /* Allow messages area to scroll, do not stretch .chat-container. */
+        }
+
+        .messages-area {
+            flex: 1;   /* Fill up all remaining space in .chat-container (input area is fixed height). */
+            overflow-y: auto;  /* Add vertical scrollbar if messages overflow. */
+            border: 1px solid #ddd;  /* Light gray border to separate from other areas. */
+            margin-bottom: 10px;  /* 10px gap at the bottom, separating from the input area. */
+            min-height: 200px;    /* Minimum height is 200px for good proportions even with few messages. */
+            padding: 5px;  /* 5px padding so text isn't against the edge. */
+            background: #fff;   /* White background for message area, distinct from gray outer background. */
+        }
+
+        .message {
+            margin-bottom: 8px;
+        }  /* 8px space between messages for better readability. */
+
+
+
+        .message-user .message-content {
+            background: #007bff;   /* Bright blue (Bootstrap primary), for user's own messages. */
+            color: #fff;  /* White text for high contrast. */
+            border-radius: 5px;   /* Rounded corners for bubble style. */
+            padding: 10px;  /* 10px padding for fuller, rounder bubbles. */
+            margin-left: auto;   /* Align bubbles to the right. */
+            max-width: 60%; /* Max width is 60% of container to avoid spanning entire screen. */
+            min-width: 60px; /* Minimum width is 60px, so short messages don't look too narrow. */
+            text-align: left;   /* Left-align message text. */
+            border: none;  /* No border. */
+            display: inline-block;    /* Width fits content; does not take up whole line. */
+        }
+
+        .message-assistant .message-content {
+            background: #eee; /* Light gray for AI messages, distinguishes from user. */
+            color: #222;  /* Dark gray text for softer contrast. */
+            border-radius: 5px;   /* Rounded corners for bubble style. */
+            padding: 10px;    /* 10px padding for better appearance. */
+            margin-right: auto;   /* Align AI bubbles to the left. */
+            max-width: 80%;  /* Allow AI responses to be wider (80%), often longer content. */
+            border: none;  /* No border, fits content. */
+            display: inline-block;
+        }
+
+        .message-time {
+            font-size: 10px;  /* Small font size for timestamps. */
+            opacity: 0.6;  /* Semi-transparent to reduce visual weight. */
+            margin-top: 2px;  /* 2px gap above the timestamp. */
+        }
+
+        .input-area {
+            display: flex;  /* Horizontal flex layout for input and send button. */
+            gap: 5px;    /* 5px gap between input and button. */
+            padding: 5px;   /* 5px padding inside the input area. */
+            border: 1px solid #ddd; /* Light gray border. */
+            background: #fafafa;   /* Lighter gray background to highlight the input area. */
+        }
+
+        .message-input {
+            flex: 1;   /* Input takes up all space except the button. */
+            padding: 6px; /* 6px padding for comfort. */
+            border: 1px solid #ccc;  /* Slightly darker border than #ddd for clearer separation. */
+            font-size: 12px;
+            border-radius: 6px;   /* Rounded corners for input. */
+        }
+
+
+        .send-btn {
+            background: #007bff;   /* Blue send button. */
+            color: white;    /* White icon/text. */
+            border: none;  /* No border. */
+            width: 32px;    /* Button is 32x32px for comfortable clicking. */
+            height: 32px;
+            cursor: pointer;   /* Pointer cursor on hover to indicate it's clickable. */
+            border-radius: 8px;    /* Rounded corners for button. */
+        }
+
+        .folder-selector,
+        .documents-tree,
+        .tree-header,
+        .tree-container,
+        .tree-item,
+        .logo {
+            margin-bottom: 8px;
+            font-size: 14px;
+        } /* 8px margin bottom for these sections, font size 14px for subheadings, item names, etc. */
+
+        .tree-item {
+            cursor: pointer;  /* Pointer cursor on hover for clickability. */
+            padding: 3px 0 3px 8px;
+        }  /* 3px top/bottom, 8px left padding for tree indentation. */
+
+        .tree-item.folder { font-weight: bold; }    /* Bold folder names for emphasis. */
+        .tree-item.file { color: #666; }      /* Gray for file names (less important than folders). */
+
+    </style>
+
+</head>
+
+<body>
+   
+    <div id="app">  <!-- This is the mounting point for the Vue app. All page content goes inside this div and will be managed by Vue. -->
+
+        <div class="app-container">  <!-- Main container for horizontal flex layout. Sidebar on the left, main chat area on the right. -->
+            <!-- Sidebar -->
+            <div class="sidebar">  <!-- Left section, fixed width, white background, with border -->
+                <!-- Logo -->
+                <div class="logo">
+                    <h1><i class="fas fa-robot"></i> RAG Assistant</h1>  <!-- Robot icon + Title -->
+                </div>
+
+                <!-- Document Tree -->
+                <div class="documents-tree">  <!-- Document tree area, shows and manages all uploaded/included documents for RAG -->
+                    <div class="tree-header">
+                        <h3><i class="fas fa-database"></i> Resource Library</h3>
+                        <button
+                                @click="downloadAllDocuments"
+                                :disabled="documents.length === 0 || isDownloading">  <!-- disables button if no docs or downloading -->
+                                <!-- 'disabled' is a standard HTML attribute; when set, the button is grayed out and unclickable -->
+                            <i class="fas fa-download" v-if="!isDownloading"></i>  <!-- Download icon only shown when not downloading -->
+                            {{ isDownloading ? 'Downloading...' : 'Download' }}  <!-- Vue variable for dynamic button label -->
+                        </button>
+
+                    </div>
+                            <!-- {
+                                foo: { type: 'folder', ... },
+                                bar: { type: 'folder', ... },
+                                rootFiles: [...]
+                            }  -->
+                    <div class="tree-container">
+                        <div v-if="Object.keys(documentTree).length === 0">  <!-- Object.keys(XXX) gets all top-level keys as array -->
+                            <i class="fas fa-folder-open"></i>
+                            <p>No documents</p>
+                        </div>
+                       
+                        <div v-else>  <!-- Otherwise, render the actual document tree structure -->
+                            <!-- Root Directory -->
+                            <div class="tree-item folder" @click="toggleFolder('documents')">  <!-- Call toggleFolder to expand/collapse 'documents' -->
+                                <!-- Use isFolderExpanded('documents') to decide open/closed icon -->
+                                <i :class="isFolderExpanded('documents') ? 'fas fa-folder-open' : 'fas fa-folder'"></i>
+                                <span>documents/</span>
+                                <i class="fas" :class="isFolderExpanded('documents') ? 'fa-chevron-down' : 'fa-chevron-right'" style="margin-left: auto; font-size: 8px;"></i>  <!-- Arrow on right and smaller: down for expanded, right for collapsed -->
+                            </div>
+     
+                            <!-- Folder contents -->
+                            <template v-if="isFolderExpanded('documents')">  <!-- Only render children when root 'documents' is expanded -->
+                                <template v-for="(item, key) in documentTree" :key="key">  <!-- key is each top-level property name, item is its value --> <!-- :key="key" is Vue best practice for v-for -->
+                                    <!-- Only render folder items; each subfolder has 15px left indent for tree look -->
+                                    <div v-if="item.type === 'folder'" class="tree-item folder"
+                                         :style="{paddingLeft: '15px'}"  
+                                         @click="toggleFolder('documents/' + key)">  <!-- Click to expand/collapse subfolder -->
+
+                                        <!-- Show open/closed folder icon depending on expansion -->
+                                        <i :class="isFolderExpanded('documents/' + key) ? 'fas fa-folder-open' : 'fas fa-folder'"></i>
+                                        <span>{{ key }}/</span>  <!-- Show folder name with trailing / slash -->
+                                        <i class="fas" 
+                                           :class="isFolderExpanded('documents/' + key) ? 'fa-chevron-down' : 'fa-chevron-right'" 
+                                           style="margin-left: auto; font-size: 8px;"></i>  <!-- Arrow on right and smaller, same logic: down for expanded, right for collapsed -->
+                                    </div>
+                                    
+                                    <!-- Render all files under this folder, each with unique filename as key for efficiency -->
+                                    <!-- Files are indented more (30px): root folders 0px, subfolders 15px, files 30px, for visual clarity -->
+                                    <!-- Files in folders -->  <!-- Only shown when folder is expanded -->
+                                    <template v-if="item.type === 'folder' && isFolderExpanded('documents/' + key)">
+                                        <div v-for="file in item.files" :key="file.filename"  
+                                             class="tree-item file"
+                                             :style="{paddingLeft: '30px'}"> 
+                                            <i :class="getFileIconClass(file.file_type)"></i>  <!-- File type icon based on extension -->
+                                            <span>{{ file.name }}</span>  <!-- file.name: pure file name; file.filename: name with path info -->
+                                        </div>
+                                    </template>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Chat Header -->
+                <div>
+                    <h2><i class="fas fa-comments"></i> Chat</h2>
+                </div>
+
+                <!-- Chat Container -->
+                <div class="chat-container">
+                    <!-- Messages -->
+                    <!-- messagesArea.value will be a DOM node, so you can use native DOM methods like .scrollTop, .scrollHeight, etc. -->
+                    <div class="messages-area" ref="messagesArea">
+                        <div v-if="messages.length === 0">  <!-- Only shown when messages array is empty -->
+                            <i class="fas fa-comment-dots"></i>
+                            <h3>Start Conversation</h3>
+                            <p>Attention: The Conversation History Will be Collected by the Server for Studying</p>
+                        </div>
+                        <div v-for="(message, index) in messages" :key="index" 
+                             class="message" :class="'message-' + message.type">  <!-- message-user or message-assistant -->
+                            <div class="message-content"> 
+                                <div v-if="message.type === 'user'">  
+                                    {{ message.content }}  <!-- User messages displayed as plain text -->
+                                </div>
+                                <div v-else v-html="message.type === 'assistant' ? marked.parse(message.content) : message.content"></div>  <!-- Assistant reply supports markdown, rendered with v-html and marked.parse() -->
+                            </div>
+                            <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+                        </div>
+                        <div v-if="isLoading" class="message message-assistant">
+                            <div class="message-content">
+                                Thinking...
+                            </div>  <!-- Only shown when AI is replying -->
+                        </div>
+                    </div>
+
+                    <!-- Folder Selector -->
+                    <div class="folder-selector">
+                        <label for="folder-select">  <!-- 'for' must match the id below -->
+                            <i class="fas fa-folder"></i> Scope:
+                        </label>
+                        <!-- <select> dropdown lets user choose which folder to search in
+                        id="folder-select": links with label
+                        v-model="selectedFolder": Vue two-way binding; selectedFolder updates automatically -->
+                        <select id="folder-select" v-model="selectedFolder" class="folder-select">
+                            <option value="">All Documents</option>  <!-- selectedFolder -> null -->  <!-- value -->
+
+                            <option v-for="folder in folders" :key="folder.folder_name" :value="folder.folder_name">  <!-- value -->
+                                {{ folder.folder_name }} ({{ folder.documents_count }} file)
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="input-area">
+                        <!-- type="text": single-line input field
+                        v-model="currentMessage": Vue two-way binding; syncs input with variable
+                        currentMessage is declared with ref in JS; changes sync both ways
+                        .prevent prevents default form submission (like page reload)
+                        When isLoading is true, input is disabled -->
+                        <input type="text" 
+                               class="message-input"
+                               v-model="currentMessage"
+                               @keydown.enter.prevent="sendMessage"
+                               :placeholder="selectedFolder ? 'Ask a question from the expert engine: ' + selectedFolder + '...' : 'Ask a question from the global engine...'"
+                               :disabled="isLoading">
+                        <button class="send-btn" 
+                                @click="sendMessage"
+                                :disabled="isLoading || !currentMessage.trim()">  <!-- // !"" -> true; !"hihi" -> false -->
+                            <i class="fas fa-paper-plane" v-if="!isLoading"></i>  <!-- Show paper plane icon when ready, loading possible animation when replying -->
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // import several APIs from the global Vue object
+        const { createApp, ref, onMounted, nextTick } = Vue;
+        createApp({  // create a Vue application instance (serves as the entry point)
+            // onMounted: the lifecycle setting, runs automatically after the page/component is loaded (initialization)
+            // nextTick: wait until the DOM update is complete before executing a function
+            // in some cases, like manipulating the scrollbar, Vue is not smart enough
+            // you may need to get the DOM node, then use native DOM APIs (e.g., .scrollTop) to operate on it
+
+            setup() {
+                // the recommended logic entry in Vue 3: define all data and methods here, then return them for use in the <template>
+                // ref is Vue 3's API for declaring reactive variables; when you update a variable declared with ref, the page will update automatically
+                // to change its value later, use count.value = 123
+
+                // Set is a native JavaScript data structure, similar to an array but does not allow duplicate values. Lookup and deletion are fast.
+                // Vue 3 has limited reactivity support for native Set (calling .add() won't trigger a view update).
+                // So we wrap it with ref to make it reactive. After changing the Set, reassign a new Set (new Set(...)) so Vue can detect the change.
+
+                const documents = ref([]);
+                const documentTree = ref([]);
+                const folders = ref([]);
+                const selectedFolder = ref('');
+                const messages = ref([]);
+                const currentMessage = ref('');
+                const isLoading = ref(false);
+                const isDownloading = ref(false);        // downloading state
+                const conversationId = ref(null);        // session ID for maintaining conversation state with the backend (e.g., multi-turn conversation)
+                const expandedFolders = ref(new Set());  // a Set object to store which folders are expanded
+                const messagesArea = ref(null);          // used to store a DOM node object, not a string or number
+
+                // API base URL
+                const API_BASE = 'http://localhost:8000/api';
+
+
+                // Scroll the chat window (messagesArea) to the bottom so that the latest message is always visible
+                const scrollToBottom = () => {
+                    nextTick(() => {  // Wait until the DOM has finished updating and rendering, before manipulating the DOM
+                        if (messagesArea.value) {  // Avoid null pointer errors
+                            // .scrollTop: the number of pixels from the top of the content to the top of the scrollbar (writable)
+                            // scrollHeight: the total height of the element's content (read-only)
+                            // .scrollTop = .scrollHeight: scrolls directly to the bottom
+                            messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
+                        }
+                    });
+                };
+
+                // documents is an array where each element is an object like:
+                // { filename: "reports/sales_q2.pdf", file_size: 250000, upload_time: "xx", file_type: ".pdf" }
+                const buildDocumentTree = (documents) => {
+                    const tree = {};  // tree is used to store the final tree structure
+                    const rootFiles = [];  // rootFiles is used to separately record files that are directly under the "documents" directory
+                    
+                    documents.forEach(doc => {
+                        const pathParts = doc.filename.split('/');
+                        
+                        if (pathParts.length === 1) {
+                            rootFiles.push({
+                                type: 'file',
+                                name: pathParts[0],
+                                ...doc  // spread all properties in the doc object (like file_size, file_type) into the rootFiles object
+                            });
+                            return;
+                        }
+
+                       // The value of currentLevel will be updated in the loop to step deeper into the tree structure
+                        let currentLevel = tree;  // Must use let (can be reassigned), not const (cannot be reassigned)
+                        
+                        for (let i = 0; i < pathParts.length - 1; i++) {  // -1 because the last item is the filename, which we don't process here
+                            const folderName = pathParts[i];  // Get the folder name at the current level
+                            //  If there is no node for this folder at the current level, create one
+                            if (!currentLevel[folderName]) {
+                                currentLevel[folderName] = {
+                                    type: 'folder',  // Mark as a folder
+                                    name: folderName,  // The name of this folder
+                                    children: {},  // Can hold child folders (dictionary)
+                                    files: []  // The file list at this folder level
+                                };
+                            }
+                            // Move the "cursor" to the next level, i.e., into the children object of this folder,
+                            // so the next iteration will continue to search or create deeper subfolders inside its children.
+                            // This allows for further nesting of subfolders or placing files at the current level.
+                            currentLevel = currentLevel[folderName].children;
+                        }
+
+                        const fileName = pathParts[pathParts.length - 1];  // get the file name
+                        let targetFolder = tree;  // copy the currentLevel; start from the root of the document tree and get ready to traverse deeper
+                        for (let i = 0; i < pathParts.length - 1; i++) {
+                            targetFolder = targetFolder[pathParts[i]];  // enter the current subfolder position inside the tree object; we want to add items to its files array
+                        }
+                        
+                        if (!targetFolder.files) {
+                            targetFolder.files = []  // Make sure the current folder object has a usable files array
+                        }
+                        
+                        targetFolder.files.push({
+                            type: 'file',
+                            name: fileName,
+                            ...doc
+                        });
+                    });
+                    
+                    tree._rootFiles = rootFiles;
+                    return tree;
+                };
+
+                // These two functions are only called inside onMounted() and do not need to be returned or exposed to the <template>
+                const loadDocuments = async () => {  // Define an async arrow function because await will be used inside for network requests
+                    try {
+                        const response = await axios.get(`${API_BASE}/documents`);  // GET request
+                        documents.value = response.data;  // .data is a property on the Axios response object that represents the response body from the server
+                        documentTree.value = buildDocumentTree(response.data);
+                    } catch (error) {
+                        console.error('Failed to load documents:', error);
+                    }
+                };
+
+                // Load folders
+                const loadFolders = async () => {
+                    try {
+                        const response = await axios.get(`${API_BASE}/folders`);
+                        folders.value = response.data;
+                    } catch (error) {
+                        console.error('Failed to load folders:', error);
+                    }
+                };
+
+                const getFileIconClass = (fileType) => {
+                    const iconMap = {
+                        '.pdf': 'fas fa-file-pdf',
+                        '.doc': 'fas fa-file-word',
+                        '.docx': 'fas fa-file-word',
+                        '.txt': 'fas fa-file-alt',
+                        '.md': 'fab fa-markdown',
+                        '.html': 'fab fa-html5'
+                    };
+                    return iconMap[fileType?.toLowerCase()] || 'fas fa-file';  // ? a safety measure; it won't throw an error even if the value is null
+                };
+
+                const toggleFolder = (folderPath) => {
+                    if (expandedFolders.value.has(folderPath)) {  
+                        expandedFolders.value.delete(folderPath);
+                    } else {
+                        expandedFolders.value.add(folderPath);
+                    }
+                    expandedFolders.value = new Set(expandedFolders.value);  // new Set() because of the limited Vue3
+                };
+                // expandedFolders.value -> Set { 'documents', 'documents/foo' }: indicates the root directory "documents" is expanded, and the "foo" folder is also expanded
+
+                const isFolderExpanded = (folderPath) => {
+                    return expandedFolders.value.has(folderPath);   // check if folder expanded
+                };
+
+
+                let sendingInProgress = false;  // flag
+                const sendMessage = async () => {
+                    // If the input is empty, or loading is in progress, or a message is already being sent, block sending
+                    // .trim() removes spaces from both ends of the string to prevent sending empty messages
+                    if (!currentMessage.value.trim() || isLoading.value || sendingInProgress) {  // !"" -> true; !"hihi" -> false
+                        return;  // Do nothing
+                    }
+                    
+                    sendingInProgress = true;  // Set flag so subsequent sends are blocked until finished
+                    const userMessage = currentMessage.value.trim();  // Save trimmed message content (input will be cleared soon)
+                    currentMessage.value = '';  // Clear the input field after getting the user's message
+                    
+                    messages.value.push({
+                        type: 'user',
+                        content: userMessage,
+                        timestamp: new Date()
+                    });  // Add the user's message (type: user, content, timestamp) to the message list
+
+                    scrollToBottom();
+                    isLoading.value = true;
+                    
+                    try {
+                        const chatData = {
+                            message: userMessage,
+                            conversation_id: conversationId.value  // Prepare the data structure (chatData) for backend, including message and conversation ID (ID may be null initially)
+                        };
+                        
+                        if (selectedFolder.value) {  // If a folder is selected for search scope, include folder_name in chatData for RAG
+                            chatData.folder_name = selectedFolder.value;
+                        }
+                        
+                        const response = await axios.post(`${API_BASE}/chat`, chatData);
+                        
+                        if (response.data.conversation_id) {
+                            conversationId.value = response.data.conversation_id;
+                        }  // If a new conversation ID is returned from backend (e.g., first message), save it for the next round
+                        
+                        messages.value.push({
+                            type: 'assistant',
+                            content: response.data.response,
+                            timestamp: new Date()  // When adding the assistant's reply, use new Date() as the local timestamp
+                        });  // Add the assistant's reply to the message list
+
+                        scrollToBottom();
+
+                    } catch (error) {
+                        console.error('Failed to send message:', error);
+                    } finally {
+                        isLoading.value = false;
+                        sendingInProgress = false;
+                    }
+                };
+
+                const formatTime = (date) => {
+                    return date.toLocaleTimeString('en-GB', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                };
+
+                const downloadAllDocuments = async () => {
+                    // If there are no documents or a download is already in progress, exit early and do nothing
+                    if (documents.value.length === 0 || isDownloading.value) {
+                        return;
+                    }
+                    
+                    isDownloading.value = true;  // Set to "downloading" state to prevent duplicate downloads
+                    
+                    try {  
+                        const response = await axios.get(`${API_BASE}/download/all`, {
+                            responseType: 'blob'  // Tell Axios to treat the response as binary Blob (not JSON/text)
+                        });
+                        // response.data is the binary content of the ZIP package
+                        // 'application/zip' sets the Blob type so the browser and OS recognize it as a ZIP file
+                        // Blob expects the first argument to be an array; wrap response.data accordingly
+                        const blob = new Blob([response.data], { type: 'application/zip' });  // Package the binary data as a Blob
+                        const url = window.URL.createObjectURL(blob);  // Generate a temporary URL for the Blob so the browser can download it
+                        // To trigger a file download in the browser, create an <a> tag with href and download attributes
+                        const link = document.createElement('a');
+                        link.href = url;
+
+                        // Try to get the filename from the Content-Disposition header sent by the backend
+                        const contentDisposition = response.headers['content-disposition'];
+                        let filename = 'documents.zip';  // default
+                        if (contentDisposition) {
+                            const filenameMatch = contentDisposition.match(/filename=(.+)/);  // Use a regular expression to match the content after "filename="; (.+) Greedy match (matches as much as possible)
+                            if (filenameMatch) {
+                                filename = filenameMatch[1].replace(/"/g, '');  // filenameMatch[0]: the entire matched string; filenameMatch[1]: the content captured by the first parentheses (), i.e., the part after "filename="
+                            }  // /" matches a double quote; /g is the global flag; removes all quotation marks
+                        }
+                        
+                        link.download = filename;  // Set the suggested filename for download
+                        // Temporarily add the <a> tag to the DOM
+                        document.body.appendChild(link);
+                        // Programmatically trigger a click to start the download
+                        link.click();
+                        // Remove the <a> tag after download starts to keep the DOM clean
+                        document.body.removeChild(link);
+                        // Release the temporary URL to avoid memory leaks
+                        window.URL.revokeObjectURL(url);
+                        
+                    } catch (error) {
+                        console.error('Download failed:', error);
+                    } finally {
+                        isDownloading.value = false;
+                    }
+                };
+
+                // initialize
+                onMounted(() => {
+                    expandedFolders.value.add('documents');
+                    loadDocuments();
+                    loadFolders();
+                });
+
+                return {  // In setup(), only variables and functions that are returned can be accessed in the <template> section
+                    documents,
+                    documentTree,
+                    folders,
+                    selectedFolder,
+                    messages,
+                    currentMessage,
+                    isLoading,
+                    isDownloading,
+                    expandedFolders,
+                    getFileIconClass,
+                    toggleFolder,   
+                    isFolderExpanded,
+                    sendMessage,        
+                    formatTime,
+                    downloadAllDocuments,
+                    messagesArea,
+                    marked
+                };
+            }
+        }).mount('#app');  // Mount the created Vue app to <div id="app">; from this moment, everything returned from setup() is accessible in the <template>
+    </script>
+
+</body>
+</html>
